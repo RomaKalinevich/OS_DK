@@ -7,7 +7,7 @@
     let isSubmitting = false;
     let isSuccess = false;
     let errorMessage = '';
-    
+
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
 
     const steps = [

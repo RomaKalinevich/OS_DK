@@ -3,13 +3,46 @@
     let phone = $state('');
     let agreed = $state(false);
 
-    function handleSubmit(event) {
+    let isSubmitting = $state(false);
+    let isSuccess = $state(false);
+    let errorMessage = $state('');
+
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
+
+    async function handleSubmit(event) {
         event.preventDefault();
         if (!agreed) {
             alert('Пожалуйста, подтвердите согласие на обработку персональных данных');
             return;
         }
-        console.log({name, phone});
+
+        isSubmitting = true;
+        errorMessage = '';
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify({
+                    name: name.trim(),
+                    phone: phone.trim(),
+                    email: 'Заявка на скидку 10% (Hero)'
+                })
+            });
+
+            isSuccess = true;
+            name = '';
+            phone = '';
+            agreed = false;
+        } catch (err) {
+            console.error(err);
+            errorMessage = 'Ошибка отправки. Попробуйте еще раз или позвоните нам.';
+        } finally {
+            isSubmitting = false;
+        }
     }
 </script>
 
@@ -47,43 +80,63 @@
 
             <div class="hero-right">
                 <form class="lead-card" onsubmit={handleSubmit}>
-                    <h3>Хочу 10% скидку</h3>
+                    {#if isSuccess}
+                        <div class="success-box">
+                            <div class="success-icon">✓</div>
+                            <h3>Заявка принята!</h3>
+                            <p class="success-text">Скидка 10% зафиксирована за вашим номером. Мы перезвоним вам в ближайшее время!</p>
+                            <button type="button" class="submit-btn" onclick={() => (isSuccess = false)}>
+                                Отправить еще
+                            </button>
+                        </div>
+                    {:else}
+                        <h3>Хочу 10% скидку</h3>
 
-                    <div class="form-group">
-                        <label for="name"><span>*</span> Имя</label>
-                        <input
-                                id="name"
-                                type="text"
-                                bind:value={name}
-                                required
-                        />
-                    </div>
+                        {#if errorMessage}
+                            <div class="error-msg">{errorMessage}</div>
+                        {/if}
 
-                    <div class="form-group">
-                        <label for="phone"><span>*</span> Телефон</label>
-                        <input
-                                id="phone"
-                                type="tel"
-                                placeholder="+375 (__) ___-__-__"
-                                bind:value={phone}
-                                required
-                        />
-                    </div>
+                        <div class="form-group">
+                            <label for="name"><span>*</span> Имя</label>
+                            <input
+                                    id="name"
+                                    type="text"
+                                    bind:value={name}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                        </div>
 
-                    <div class="checkbox-group">
-                        <input
-                                type="checkbox"
-                                id="agree"
-                                bind:checked={agreed}
-                                required
-                        />
-                        <label for="agree">
-                            <span>*</span> Я согласен на обработку моих
-                            <a href="#privacy">персональных данных</a>
-                        </label>
-                    </div>
+                        <div class="form-group">
+                            <label for="phone"><span>*</span> Телефон</label>
+                            <input
+                                    id="phone"
+                                    type="tel"
+                                    placeholder="+375 (__) ___-__-__"
+                                    bind:value={phone}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                        </div>
 
-                    <button type="submit" class="submit-btn">Отправить заявку</button>
+                        <div class="checkbox-group">
+                            <input
+                                    type="checkbox"
+                                    id="agree"
+                                    bind:checked={agreed}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                            <label for="agree">
+                                <span>*</span> Я согласен на обработку моих
+                                <a href="#privacy">персональных данных</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn" disabled={isSubmitting}>
+                            {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
+                        </button>
+                    {/if}
                 </form>
             </div>
         </div>
@@ -104,6 +157,7 @@
 
     .hero-overlay {
         position: absolute;
+        inset: 0;
         background: rgba(26, 26, 26, 0.72);
     }
 
@@ -229,6 +283,11 @@
         background-color: #ffffff;
     }
 
+    .form-group input:disabled {
+        background-color: #e9e9e9;
+        cursor: not-allowed;
+    }
+
     .checkbox-group {
         display: flex;
         align-items: flex-start;
@@ -269,12 +328,53 @@
         transition: background-color 0.2s, transform 0.1s;
     }
 
-    .submit-btn:hover {
+    .submit-btn:hover:not(:disabled) {
         background-color: #e0a300;
     }
 
-    .submit-btn:active {
+    .submit-btn:active:not(:disabled) {
         transform: translateY(1px);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    .success-box {
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    .success-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background-color: #f5b300;
+        color: #111111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: bold;
+        margin: 0 auto 16px;
+    }
+
+    .success-text {
+        font-size: 15px;
+        color: #666666;
+        margin: 0 0 24px 0;
+        line-height: 1.4;
+    }
+
+    .error-msg {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        margin-bottom: 16px;
+        text-align: center;
     }
 
     @media (max-width: 992px) {
