@@ -29,7 +29,7 @@
 
         <div class="socials">
             <a
-                    href="https://www.instagram.com/os.mebel/"
+                    href="https://www.instagram.com/p/DbSnT3jghJl/?stkn=MWgxY2NjczN4NWY0MA=="
                     target="_blank"
                     aria-label="Instagram"
                     class="social-link instagram"

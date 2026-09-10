@@ -128,8 +128,8 @@
         display: block;
         font-size: 24px;
         font-weight: 400;
-        line-height: 28.8px;
-        color: rgba(255, 255, 255, 0.7); /* то же самое, что #FFFFFFB2 */
+        line-height: 29px;
+        color: rgba(255, 255, 255, 0.7);
         margin-bottom: 12px;
     }
 
