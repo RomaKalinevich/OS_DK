@@ -1,4 +1,22 @@
 <script>
+    // Автоматическая загрузка фото для каждой категории из папок
+    const wardrobesModules = import.meta.glob(
+        '/assets/works/wardrobes/*.{jpg,jpeg,png,webp}',
+        { eager: true, import: 'default' }
+    );
+    const dressingModules = import.meta.glob(
+        '/assets/works/dressing/*.{jpg,jpeg,png,webp}',
+        { eager: true, import: 'default' }
+    );
+    const officeModules = import.meta.glob(
+        '/assets/works/office/*.{jpg,jpeg,png,webp}',
+        { eager: true, import: 'default' }
+    );
+
+    const wardrobesImages = Object.values(wardrobesModules);
+    const dressingImages = Object.values(dressingModules);
+    const officeImages = Object.values(officeModules);
+
     const works = [
         {
             title: 'Шкафы',
@@ -10,7 +28,8 @@
                 'Материалы на выбор: ЛДСП/МДФ Эко-шпон, матовые и глянцевые эмали, фасады из натурального дерева или стекла.',
                 'Визуализация 3D: Вы видите точный проект до начала производства.'
             ],
-            image: '/images/pamela.png',
+            // Если в папке пока пусто — показываем запасную картинку
+            images: wardrobesImages.length ? wardrobesImages : ['/images/pamela.png'],
             reverse: false
         },
         {
@@ -23,7 +42,7 @@
                 'Освещение: Встроенная подсветка, которая делает сборы утром комфортными.',
                 'Зеркала и фурнитура: Европейские механизмы, рассчитанные на ежедневную интенсивную нагрузку.'
             ],
-            image: '/images/lube.png',
+            images: dressingImages.length ? dressingImages : ['/images/lube.png'],
             reverse: true
         },
         {
@@ -36,10 +55,25 @@
                 'Переговорные комнаты: Трансформируемые столы и стулья для совещаний и мозговых штурмов.',
                 'Зоны ресепшн: Стойки регистрации, которые создают первое впечатление о вашем бизнесе.'
             ],
-            image: '/images/korano.png',
+            images: officeImages.length ? officeImages : ['/images/korano.png'],
             reverse: false
         }
     ];
+
+    // Индексы активного слайда для каждой из 3 карточек
+    let activeSlides = $state(works.map(() => 0));
+
+    function prevSlide(cardIndex, total) {
+        activeSlides[cardIndex] = (activeSlides[cardIndex] - 1 + total) % total;
+    }
+
+    function nextSlide(cardIndex, total) {
+        activeSlides[cardIndex] = (activeSlides[cardIndex] + 1) % total;
+    }
+
+    function setSlide(cardIndex, slideIndex) {
+        activeSlides[cardIndex] = slideIndex;
+    }
 </script>
 
 <section id="gallery" class="works-section">
@@ -53,12 +87,60 @@
         </div>
 
         <div class="cards-list">
-            {#each works as item}
+            {#each works as item, cardIndex}
                 <article class="work-card" class:reverse={item.reverse}>
+                    <!-- Слайдер фотографий -->
                     <div class="image-wrapper">
-                        <img src={item.image} alt={item.title} />
+                        <div class="slider-container">
+                            {#each item.images as imgUrl, slideIndex}
+                                <img
+                                        src={imgUrl}
+                                        alt="{item.title} фото {slideIndex + 1}"
+                                        class="slide-img"
+                                        class:active={activeSlides[cardIndex] === slideIndex}
+                                        loading="lazy"
+                                />
+                            {/each}
+
+                            {#if item.images.length > 1}
+                                <button
+                                        type="button"
+                                        class="slider-btn prev"
+                                        onclick={() => prevSlide(cardIndex, item.images.length)}
+                                        aria-label="Предыдущее фото"
+                                >
+                                    <svg width="8" height="14" viewBox="0 0 10 16" fill="none">
+                                        <path d="M8.5 1.5L2 8L8.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+
+                                <button
+                                        type="button"
+                                        class="slider-btn next"
+                                        onclick={() => nextSlide(cardIndex, item.images.length)}
+                                        aria-label="Следующее фото"
+                                >
+                                    <svg width="8" height="14" viewBox="0 0 10 16" fill="none">
+                                        <path d="M1.5 1.5L8 8L1.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+
+                                <div class="slider-dots">
+                                    {#each item.images as _, dotIndex}
+                                        <button
+                                                type="button"
+                                                class="slider-dot"
+                                                class:active={activeSlides[cardIndex] === dotIndex}
+                                                onclick={() => setSlide(cardIndex, dotIndex)}
+                                                aria-label="Перейти к фото {dotIndex + 1}"
+                                        ></button>
+                                    {/each}
+                                </div>
+                            {/if}
+                        </div>
                     </div>
 
+                    <!-- Текстовое описание -->
                     <div class="content-wrapper">
                         <h3 class="card-title">{item.title}</h3>
                         <span class="card-subtitle">{item.subtitle}</span>
@@ -82,7 +164,8 @@
     .works-section {
         position: relative;
         padding: 90px 40px;
-        background-image: url('/images/works-bg.png'); background-repeat: repeat;
+        background-image: url('/images/works-bg.png');
+        background-repeat: repeat;
     }
 
     .container {
@@ -130,20 +213,108 @@
         flex-direction: row-reverse;
     }
 
+    /* Обертка слайдера */
     .image-wrapper {
         flex: 1 1 50%;
         min-height: 480px;
+        position: relative;
     }
 
-    .image-wrapper img {
+    .slider-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 480px;
+        overflow: hidden;
+        background-color: #f5f5f5;
+    }
+
+    /* Плавная смена слайдов */
+    .slide-img {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
+        opacity: 0;
+        transition: opacity 0.35s ease-in-out;
+        pointer-events: none;
     }
 
+    .slide-img.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Кнопки переключения внутри слайдера */
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: #FFC700;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .slider-btn:hover {
+        background-color: #e0a300;
+    }
+
+    .slider-btn:active {
+        transform: translateY(-50%) scale(0.92);
+    }
+
+    .slider-btn.prev {
+        left: 16px;
+    }
+
+    .slider-btn.next {
+        right: 16px;
+    }
+
+    /* Индикаторы страниц */
+    .slider-dots {
+        position: absolute;
+        bottom: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+
+    .slider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        padding: 0;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .slider-dot.active {
+        background-color: #FFC700;
+        transform: scale(1.3);
+    }
+
+    /* Контент карточки */
     .content-wrapper {
-        flex: 1 1 62%;
+        flex: 1 1 50%;
         padding: 40px 32px;
         display: flex;
         flex-direction: column;
@@ -224,7 +395,8 @@
             flex-direction: column;
         }
 
-        .image-wrapper {
+        .image-wrapper,
+        .slider-container {
             min-height: 320px;
         }
 
