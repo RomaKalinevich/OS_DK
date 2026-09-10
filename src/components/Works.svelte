@@ -143,7 +143,7 @@
     }
 
     .content-wrapper {
-        flex: 1 1 50%;
+        flex: 1 1 62%;
         padding: 40px 32px;
         display: flex;
         flex-direction: column;
