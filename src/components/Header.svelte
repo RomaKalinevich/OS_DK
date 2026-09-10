@@ -8,7 +8,7 @@
         <a href="#promotions">Акции</a>
         <a href="#benefits">Преимущества</a>
         <a href="#reviews">Отзывы</a>
-        <a href="#catalog">Галерея</a>
+        <a href="#catalog">Каталог</a>
         <a href="#contact">Контакты</a>
     </nav>
 

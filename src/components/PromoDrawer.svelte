@@ -129,7 +129,7 @@
     }
 
     .banner-left {
-        max-width: 580px;
+        max-width: 660px;
     }
 
     .title {

@@ -154,7 +154,7 @@
     .card-title {
         font-size: 26px;
         font-weight: 700;
-        margin: 0 0 8px 0;
+        margin: 0;
         color: #444444;
     }
 
@@ -167,9 +167,10 @@
     }
 
     .card-desc {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.5;
         color: #444444;
+        margin: 0;
     }
 
     .points-list {
@@ -181,9 +182,9 @@
     }
 
     .points-list li {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 400;
-        line-height: 20px;
+        line-height: 24px;
         color: #444444;
         position: relative;
         padding-left: 14px;
