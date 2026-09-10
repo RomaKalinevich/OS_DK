@@ -1,12 +1,10 @@
 <script>
-    // Vite автоматически собирает все изображения
     const imageModules = import.meta.glob(
-        '/src/assets/catalog/*.{jpg,jpeg,png,webp}',
+        '/assets/catalog/*.{jpg,jpeg,png,webp}',
         { eager: true, import: 'default' }
     );
     const images = Object.values(imageModules);
 
-    // Разбиваем массив всех фото на группы по 5 штук под сетку
     const PAGE_SIZE = 5;
     const pages = [];
     for (let i = 0; i < images.length; i += PAGE_SIZE) {
@@ -14,7 +12,7 @@
     }
 
     let currentPage = 0;
-    let activeImage = null;
+    let activeImageIndex = null; // Индекс текущего открытого фото (null, если закрыто)
 
     function prevPage() {
         if (pages.length <= 1) return;
@@ -26,17 +24,34 @@
         currentPage = (currentPage + 1) % pages.length;
     }
 
-    function openModal(src) {
-        activeImage = src;
+    function openModalByIndex(index) {
+        activeImageIndex = index;
     }
 
     function closeModal() {
-        activeImage = null;
+        activeImageIndex = null;
+    }
+
+    // Навигация внутри модального окна
+    function prevModalImage() {
+        if (images.length <= 1) return;
+        activeImageIndex = (activeImageIndex - 1 + images.length) % images.length;
+    }
+
+    function nextModalImage() {
+        if (images.length <= 1) return;
+        activeImageIndex = (activeImageIndex + 1) % images.length;
     }
 
     function handleKeydown(event) {
+        if (activeImageIndex === null) return;
+
         if (event.key === 'Escape') {
             closeModal();
+        } else if (event.key === 'ArrowLeft') {
+            prevModalImage();
+        } else if (event.key === 'ArrowRight') {
+            nextModalImage();
         }
     }
 </script>
@@ -48,9 +63,8 @@
         <h2 class="title">Каталог уже установленной мебели</h2>
 
         {#if pages.length > 0}
-            {@const currentPhotos = pages[currentPage]}
+            {@const pageStartIndex = currentPage * PAGE_SIZE}
             <div class="collage-wrapper">
-                <!-- Кнопка листания назад -->
                 {#if pages.length > 1}
                     <button class="nav-btn prev" on:click={prevPage} aria-label="Предыдущая страница">
                         <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
@@ -59,47 +73,45 @@
                     </button>
                 {/if}
 
-                <!-- Сетка 5 фотографий -->
                 <div class="collage-grid">
-                    <!-- Левая колонка (2 фото) -->
+                    <!-- Левая колонка -->
                     <div class="grid-col side-col">
-                        {#if currentPhotos[0]}
-                            <button type="button" class="img-box" on:click={() => openModal(currentPhotos[0])}>
-                                <img src={currentPhotos[0]} alt="Мебель 1" loading="lazy" />
+                        {#if images[pageStartIndex]}
+                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex)}>
+                                <img src={images[pageStartIndex]} alt="Мебель 1" loading="lazy" />
                             </button>
                         {/if}
-                        {#if currentPhotos[1]}
-                            <button type="button" class="img-box" on:click={() => openModal(currentPhotos[1])}>
-                                <img src={currentPhotos[1]} alt="Мебель 2" loading="lazy" />
+                        {#if images[pageStartIndex + 1]}
+                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 1)}>
+                                <img src={images[pageStartIndex + 1]} alt="Мебель 2" loading="lazy" />
                             </button>
                         {/if}
                     </div>
 
-                    <!-- Центральная колонка (1 высокое вертикальное фото) -->
+                    <!-- Центральная колонка -->
                     <div class="grid-col center-col">
-                        {#if currentPhotos[2]}
-                            <button type="button" class="img-box tall" on:click={() => openModal(currentPhotos[2])}>
-                                <img src={currentPhotos[2]} alt="Мебель 3" loading="lazy" />
+                        {#if images[pageStartIndex + 2]}
+                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 2)}>
+                                <img src={images[pageStartIndex + 2]} alt="Мебель 3" loading="lazy" />
                             </button>
                         {/if}
                     </div>
 
-                    <!-- Правая колонка (2 фото) -->
+                    <!-- Правая колонка -->
                     <div class="grid-col side-col">
-                        {#if currentPhotos[3]}
-                            <button type="button" class="img-box" on:click={() => openModal(currentPhotos[3])}>
-                                <img src={currentPhotos[3]} alt="Мебель 4" loading="lazy" />
+                        {#if images[pageStartIndex + 3]}
+                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 3)}>
+                                <img src={images[pageStartIndex + 3]} alt="Мебель 4" loading="lazy" />
                             </button>
                         {/if}
-                        {#if currentPhotos[4]}
-                            <button type="button" class="img-box" on:click={() => openModal(currentPhotos[4])}>
-                                <img src={currentPhotos[4]} alt="Мебель 5" loading="lazy" />
+                        {#if images[pageStartIndex + 4]}
+                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 4)}>
+                                <img src={images[pageStartIndex + 4]} alt="Мебель 5" loading="lazy" />
                             </button>
                         {/if}
                     </div>
                 </div>
 
-                <!-- Кнопка листания вперед -->
                 {#if pages.length > 1}
                     <button class="nav-btn next" on:click={nextPage} aria-label="Следующая страница">
                         <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
@@ -109,7 +121,6 @@
                 {/if}
             </div>
 
-            <!-- Индикаторы страниц -->
             {#if pages.length > 1}
                 <div class="dots-wrapper">
                     {#each pages as _, index}
@@ -123,78 +134,144 @@
                 </div>
             {/if}
         {:else}
-            <p class="empty-msg">В папке <code>src/assets/catalog/</code> пока нет фото.</p>
+            <p class="empty-msg">В каталоге пока нет фото.</p>
         {/if}
     </div>
 </section>
 
-<!-- Модальное окно просмотра фото -->
-{#if activeImage}
-    <div class="lightbox" on:click={closeModal} role="dialog" aria-modal="true">
-        <div class="lightbox-content" on:click|stopPropagation>
-            <button class="close-btn" on:click={closeModal} aria-label="Закрыть">✕</button>
-            <img src={activeImage} alt="Увеличенное изображение мебели" />
+<!-- Модальное окно со слайдером -->
+{#if activeImageIndex !== null}
+    <div
+            class="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Просмотр фотографии"
+            tabindex="-1"
+    >
+        <button
+                type="button"
+                class="lightbox-backdrop"
+                on:click={closeModal}
+                aria-label="Закрыть модальное окно"
+        ></button>
+
+        <div class="lightbox-content">
+            <button
+                    type="button"
+                    class="close-btn"
+                    on:click={closeModal}
+                    aria-label="Закрыть"
+            >
+                ✕
+            </button>
+
+            <!-- Кнопки листания внутри модалки -->
+            {#if images.length > 1}
+                <button
+                        type="button"
+                        class="modal-nav-btn prev"
+                        on:click={prevModalImage}
+                        aria-label="Предыдущее фото"
+                >
+                    <svg width="12" height="20" viewBox="0 0 10 16" fill="none">
+                        <path d="M8.5 1.5L2 8L8.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            {/if}
+
+            <img src={images[activeImageIndex]} alt="Увеличенное изображение мебели" />
+
+            {#if images.length > 1}
+                <button
+                        type="button"
+                        class="modal-nav-btn next"
+                        on:click={nextModalImage}
+                        aria-label="Следующее фото"
+                >
+                    <svg width="12" height="20" viewBox="0 0 10 16" fill="none">
+                        <path d="M1.5 1.5L8 8L1.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            {/if}
+
+            <!-- Индикатор номера фотографии -->
+            <div class="modal-counter">
+                {activeImageIndex + 1} / {images.length}
+            </div>
         </div>
     </div>
 {/if}
 
 <style>
     .catalog-section {
-        padding: 80px 40px;
+        padding: 48px 20px;
         background-color: #ffffff;
     }
 
     .container {
-        max-width: 1400px;
+        max-width: 1040px;
         margin: 0 auto;
+        position: relative;
     }
 
     .title {
         text-align: center;
-        font-size: 34px;
+        font-size: 30px;
         font-weight: 700;
         color: #222222;
-        margin: 0 0 54px 0;
+        margin: 0 0 32px 0;
     }
 
     .collage-wrapper {
         position: relative;
+        width: 100%;
         margin: 0 auto;
     }
 
-    /* Сетка коллажа как в Figma */
     .collage-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 16px;
-        height: 628px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        height: clamp(420px, 58vh, 520px);
+        width: 100%;
+    }
+
+    .grid-col {
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
     }
 
     .side-col {
         display: grid;
-        grid-template-rows: 1fr 1fr;
-        gap: 16px;
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        gap: 14px;
         height: 100%;
     }
 
     .center-col {
+        display: flex;
         height: 100%;
     }
 
-    /* Кнопки-обертки для картинок */
     .img-box {
+        position: relative;
         display: block;
         width: 100%;
         height: 100%;
+        min-width: 0;
+        min-height: 0;
         padding: 0;
         border: none;
         background-color: #f0f0f0;
         cursor: pointer;
         overflow: hidden;
-        position: relative;
     }
 
     .img-box img {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -206,7 +283,6 @@
         transform: scale(1.03);
     }
 
-    /* Желтые кнопки листания */
     .nav-btn {
         position: absolute;
         top: 50%;
@@ -220,28 +296,16 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        z-index: 10;
+        z-index: 5;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
         transition: background-color 0.2s, transform 0.1s;
     }
 
-    .nav-btn:hover {
-        background-color: #e0a300;
-    }
+    .nav-btn:hover { background-color: #e0a300; }
+    .nav-btn:active { transform: translateY(-50%) scale(0.92); }
+    .nav-btn.prev { left: -22px; }
+    .nav-btn.next { right: -22px; }
 
-    .nav-btn:active {
-        transform: translateY(-50%) scale(0.92);
-    }
-
-    .nav-btn.prev {
-        left: -22px;
-    }
-
-    .nav-btn.next {
-        right: -22px;
-    }
-
-    /* Точки */
     .dots-wrapper {
         display: flex;
         justify-content: center;
@@ -265,49 +329,99 @@
         transform: scale(1.25);
     }
 
-    /* Лайтбокс */
+    .empty-msg {
+        text-align: center;
+        color: #888888;
+    }
+
+    /* Модальное окно */
     .lightbox {
         position: fixed;
         inset: 0;
-        background-color: rgba(0, 0, 0, 0.88);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 1000;
         padding: 24px;
+        outline: none;
+    }
+
+    .lightbox-backdrop {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.9);
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
     }
 
     .lightbox-content {
         position: relative;
-        max-width: 90vw;
-        max-height: 90vh;
+        z-index: 1;
+        max-width: 88vw;
+        max-height: 88vh;
         display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .lightbox-content img {
         max-width: 100%;
-        max-height: 90vh;
+        max-height: 84vh;
         object-fit: contain;
         border-radius: 4px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        user-select: none;
     }
 
     .close-btn {
         position: absolute;
-        top: -46px;
+        top: -44px;
         right: 0;
         background: transparent;
         border: none;
         color: #ffffff;
-        font-size: 32px;
+        font-size: 30px;
         line-height: 1;
         cursor: pointer;
         padding: 4px;
     }
 
-    .empty-msg {
-        text-align: center;
-        color: #888888;
+    /* Стрелки переключения внутри модалки */
+    .modal-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #f5b300;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .modal-nav-btn:hover { background-color: #e0a300; }
+    .modal-nav-btn:active { transform: translateY(-50%) scale(0.92); }
+    .modal-nav-btn.prev { left: -64px; }
+    .modal-nav-btn.next { right: -64px; }
+
+    .modal-counter {
+        position: absolute;
+        bottom: -36px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 14px;
+        font-weight: 500;
     }
 
     @media (max-width: 900px) {
@@ -318,21 +432,16 @@
         }
 
         .side-col {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             grid-template-rows: none;
-            height: 220px;
+            height: 200px;
         }
 
         .center-col {
-            height: 380px;
+            height: 320px;
         }
 
-        .nav-btn.prev {
-            left: 10px;
-        }
-
-        .nav-btn.next {
-            right: 10px;
-        }
+        .modal-nav-btn.prev { left: 8px; }
+        .modal-nav-btn.next { right: 8px; }
     }
 </style>

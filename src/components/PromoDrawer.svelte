@@ -91,7 +91,7 @@
 
                 <div class="action-block">
                     <p class="action-note">Поторопитесь! Срок акции ограничен</p>
-                    <a href="#promotions" class="btn-order">Заказать сейчас</a>
+                    <a href="#order" class="btn-order">Заказать сейчас</a>
                 </div>
             </div>
         </div>

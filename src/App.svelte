@@ -15,7 +15,9 @@
 	<Header />
 
 	<main class="content">
-		<Hero />
+		<section id="hero">
+			<Hero />
+		</section>
 		<section id="benefits">
 			<Benefits  />
 		</section>
@@ -31,7 +33,7 @@
 		<section id="catalog">
 			<CatalogSlider />
 		</section>
-		<section>
+		<section id="order">
 			<StepsForm />
 		</section>
 		<section id="reviews">

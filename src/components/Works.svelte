@@ -70,7 +70,7 @@
                             {/each}
                         </ul>
 
-                        <a href="#promotions" class="btn-order">Отправить заявку</a>
+                        <a href="#order" class="btn-order">Отправить заявку</a>
                     </div>
                 </article>
             {/each}
