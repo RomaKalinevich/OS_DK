@@ -112,7 +112,7 @@
     .phones {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 0;
     }
 
     .phones a {
@@ -157,7 +157,7 @@
     .phones {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 0;
     }
 
     .phones a {

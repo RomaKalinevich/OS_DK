@@ -95,7 +95,7 @@
         flex: 0 0 345px;
         width: 371px;
         height: 417px;
-        border-radius: 12px;
+        border-radius: 4px;
         overflow: hidden;
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
         background-color: #72b07e;

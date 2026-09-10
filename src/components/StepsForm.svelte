@@ -113,6 +113,7 @@
         position: absolute;
         inset: 0;
         background-image: url('/images/steps-bg.png');
+        background-repeat: no-repeat;
     }
 
     .container {
@@ -253,14 +254,15 @@
 
     .submit-btn {
         width: 100%;
-        height: 46px;
-        background-color: #f5b300;
+        height: 48px;
+        background-color: #FFC700;
         color: #111111;
         border: none;
-        border-radius: 3px;
+        border-radius: 4px;
         font-family: inherit;
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 20px;
+        line-height: 20px;
+        font-weight: 400;
         cursor: pointer;
         transition: background-color 0.2s, transform 0.1s;
     }
