@@ -1,5 +1,4 @@
 <script>
-    // Автоматическая загрузка фото для каждой категории из папок
     const wardrobesModules = import.meta.glob(
         '/assets/works/wardrobes/*.{jpg,jpeg,png,webp}',
         { eager: true, import: 'default' }
@@ -28,7 +27,6 @@
                 'Материалы на выбор: ЛДСП/МДФ Эко-шпон, матовые и глянцевые эмали, фасады из натурального дерева или стекла.',
                 'Визуализация 3D: Вы видите точный проект до начала производства.'
             ],
-            // Если в папке пока пусто — показываем запасную картинку
             images: wardrobesImages.length ? wardrobesImages : ['/images/pamela.png'],
             reverse: false
         },
