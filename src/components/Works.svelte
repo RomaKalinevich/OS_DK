@@ -82,7 +82,7 @@
     .works-section {
         position: relative;
         padding: 90px 40px;
-        background-color: #EAEAEA66;
+        background-image: url('/images/works-bg.png'); background-repeat: repeat;
     }
 
     .container {

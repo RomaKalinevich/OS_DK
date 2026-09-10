@@ -49,9 +49,7 @@
     .about-section {
         position: relative;
         padding: 100px 40px;
-        background-color: #f7f7f7;
-        /* Если есть фоновый скетч-чертеж, как на макете: */
-        /* background-image: url('/images/sketch-bg.png'); background-repeat: repeat; */
+        background-image: url('/images/about-bg.png'); background-repeat: repeat;
         overflow: hidden;
     }
 
@@ -157,7 +155,6 @@
         color: #1a1a1a;
     }
 
-    /* Адаптивность для планшетов и мобилок */
     @media (max-width: 1024px) {
         .composition-wrapper {
             flex-direction: column;
