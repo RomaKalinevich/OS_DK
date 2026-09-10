@@ -4,6 +4,12 @@
     let email = '';
     let agreed = false;
 
+    let isSubmitting = false;
+    let isSuccess = false;
+    let errorMessage = '';
+    
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
+
     const steps = [
         'Впишите имя и номер телефона в форму',
         'Мы связываемся с вами, чтобы обсудить условия',
@@ -11,14 +17,46 @@
         'Вы подписываете договор - мы реализуем вашу мебель!'
     ];
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
         if (!agreed) {
             alert('Пожалуйста, подтвердите согласие на обработку персональных данных');
             return;
         }
-        // Отправка данных формы
-        console.log({ name, phone, email });
+
+        isSubmitting = true;
+        errorMessage = '';
+
+        try {
+            /*
+               mode: 'no-cors' необходим, так как Google Apps Script делает 302-редирект,
+               который браузер без прокси блокирует по политике CORS.
+               С 'no-cors' данные успешно доходят и записываются в таблицу.
+            */
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify({
+                    name: name.trim(),
+                    phone: phone.trim(),
+                    email: email.trim()
+                })
+            });
+
+            isSuccess = true;
+            name = '';
+            phone = '';
+            email = '';
+            agreed = false;
+        } catch (err) {
+            console.error(err);
+            errorMessage = 'Ошибка отправки. Попробуйте еще раз или позвоните нам.';
+        } finally {
+            isSubmitting = false;
+        }
     }
 </script>
 
@@ -48,52 +86,73 @@
             <!-- Правая колонка: форма -->
             <div class="steps-right">
                 <form class="lead-card" on:submit={handleSubmit}>
-                    <h3 class="card-title">Оставить заявку</h3>
+                    {#if isSuccess}
+                        <div class="success-box">
+                            <div class="success-icon">✓</div>
+                            <h3 class="card-title">Заявка принята!</h3>
+                            <p class="success-text">Мы свяжемся с вами в ближайшее время для обсуждения деталей.</p>
+                            <button type="button" class="submit-btn" on:click={() => (isSuccess = false)}>
+                                Отправить еще одну
+                            </button>
+                        </div>
+                    {:else}
+                        <h3 class="card-title">Оставить заявку</h3>
 
-                    <div class="form-group">
-                        <label for="step-name"><span>*</span> Имя</label>
-                        <input
-                                id="step-name"
-                                type="text"
-                                bind:value={name}
-                                required
-                        />
-                    </div>
+                        {#if errorMessage}
+                            <div class="error-msg">{errorMessage}</div>
+                        {/if}
 
-                    <div class="form-group">
-                        <label for="step-phone"><span>*</span> Телефон</label>
-                        <input
-                                id="step-phone"
-                                type="tel"
-                                placeholder="+375 (__) ___-__-__"
-                                bind:value={phone}
-                                required
-                        />
-                    </div>
+                        <div class="form-group">
+                            <label for="step-name"><span>*</span> Имя</label>
+                            <input
+                                    id="step-name"
+                                    type="text"
+                                    bind:value={name}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                        </div>
 
-                    <div class="form-group">
-                        <label for="step-email">E-Mail</label>
-                        <input
-                                id="step-email"
-                                type="email"
-                                bind:value={email}
-                        />
-                    </div>
+                        <div class="form-group">
+                            <label for="step-phone"><span>*</span> Телефон</label>
+                            <input
+                                    id="step-phone"
+                                    type="tel"
+                                    placeholder="+375 (__) ___-__-__"
+                                    bind:value={phone}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                        </div>
 
-                    <div class="checkbox-group">
-                        <input
-                                type="checkbox"
-                                id="step-agree"
-                                bind:checked={agreed}
-                                required
-                        />
-                        <label for="step-agree">
-                            <span>*</span> Я согласен на обработку моих
-                            <a href="#privacy">персональных данных</a>
-                        </label>
-                    </div>
+                        <div class="form-group">
+                            <label for="step-email">E-Mail</label>
+                            <input
+                                    id="step-email"
+                                    type="email"
+                                    bind:value={email}
+                                    disabled={isSubmitting}
+                            />
+                        </div>
 
-                    <button type="submit" class="submit-btn">Оставить</button>
+                        <div class="checkbox-group">
+                            <input
+                                    type="checkbox"
+                                    id="step-agree"
+                                    bind:checked={agreed}
+                                    disabled={isSubmitting}
+                                    required
+                            />
+                            <label for="step-agree">
+                                <span>*</span> Я согласен на обработку моих
+                                <a href="#privacy">персональных данных</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn" disabled={isSubmitting}>
+                            {isSubmitting ? 'Отправка...' : 'Оставить'}
+                        </button>
+                    {/if}
                 </form>
             </div>
         </div>
@@ -103,37 +162,42 @@
 <style>
     .steps-section {
         position: relative;
+        background-color: #ededed;
+        background-image: url('/images/steps-bg.png');
         background-size: cover;
         background-position: center;
-        padding: 80px 40px;
+        padding: 80px 20px;
         box-sizing: border-box;
     }
 
     .steps-overlay {
         position: absolute;
         inset: 0;
-        background-image: url('/images/steps-bg.png');
-        background-repeat: no-repeat;
+        background: rgba(245, 245, 245, 0.88);
     }
 
     .container {
         position: relative;
         z-index: 1;
-        max-width: 1400px;
+        max-width: 1160px;
         margin: 0 auto;
     }
 
     .steps-content {
-        display: grid;
-        grid-template-columns: 1.25fr 0.95fr;
-        gap: 60px;
-        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    .steps-left {
+        flex: 1 1 auto;
     }
 
     .section-title {
-        font-size: 38px;
+        font-size: 34px;
         font-weight: 700;
-        color: #333333;
+        color: #222222;
         margin: 0 0 44px 0;
         line-height: 1.25;
     }
@@ -142,7 +206,7 @@
         display: flex;
         flex-direction: column;
         gap: 24px;
-        max-width: 580px;
+        max-width: 520px;
     }
 
     .step-item {
@@ -165,32 +229,30 @@
 
     .step-text {
         margin: 0;
-        font-size: 20px;
-        font-weight: 400;
-        line-height: 30px;
-        color: #333333;
+        font-size: 15px;
+        line-height: 1.45;
+        color: #444444;
     }
 
     .steps-right {
-        display: flex;
-        justify-content: flex-end;
+        flex: 0 0 380px;
     }
 
     .lead-card {
         background: #ffffff;
         border-radius: 4px;
-        padding: 38px 36px 42px;
+        padding: 38px 32px 42px;
         width: 100%;
-        max-width: 400px;
-        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
         box-sizing: border-box;
     }
 
     .card-title {
-        font-size: 26px;
-        font-weight: 600;
+        font-size: 22px;
+        font-weight: 700;
         text-align: center;
-        color: #333333;
+        margin: 0 0 24px 0;
+        color: #1a1a1a;
     }
 
     .form-group {
@@ -200,9 +262,8 @@
     }
 
     .form-group label {
-        font-size: 14px;
-        font-weight: 400;
-        color: #333333;
+        font-size: 12px;
+        color: #555555;
         margin-bottom: 6px;
     }
 
@@ -225,6 +286,10 @@
 
     .form-group input:focus {
         border-color: #f5b300;
+    }
+
+    .form-group input:disabled {
+        background-color: #f5f5f5;
     }
 
     .checkbox-group {
@@ -254,48 +319,73 @@
 
     .submit-btn {
         width: 100%;
-        height: 48px;
-        background-color: #FFC700;
+        height: 46px;
+        background-color: #f5b300;
         color: #111111;
         border: none;
-        border-radius: 4px;
+        border-radius: 3px;
         font-family: inherit;
-        font-size: 20px;
-        line-height: 20px;
-        font-weight: 400;
+        font-size: 15px;
+        font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
+        transition: background-color 0.2s, opacity 0.2s;
     }
 
-    .submit-btn:hover {
+    .submit-btn:hover:not(:disabled) {
         background-color: #e0a300;
     }
 
-    .submit-btn:active {
-        transform: translateY(1px);
+    .submit-btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    /* Экран успешной отправки */
+    .success-box {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .success-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background-color: #f5b300;
+        color: #111111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: bold;
+        margin: 0 auto 16px;
+    }
+
+    .success-text {
+        font-size: 14px;
+        color: #666666;
+        margin: 0 0 24px 0;
+        line-height: 1.4;
+    }
+
+    .error-msg {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-bottom: 16px;
+        text-align: center;
     }
 
     @media (max-width: 992px) {
         .steps-content {
-            grid-template-columns: 1fr;
+            flex-direction: column;
+            align-items: center;
         }
 
         .steps-right {
-            justify-content: center;
-        }
-
-        .section-title {
-            font-size: 28px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .steps-section {
-            padding: 50px 20px;
-        }
-
-        .lead-card {
-            padding: 28px 20px;
+            width: 100%;
+            max-width: 400px;
         }
     }
 </style>
