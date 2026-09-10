@@ -313,6 +313,7 @@
     /* Контент карточки */
     .content-wrapper {
         flex: 1 1 50%;
+        gap: 15px;
         padding: 40px 32px;
         display: flex;
         flex-direction: column;
