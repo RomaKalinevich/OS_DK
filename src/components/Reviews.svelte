@@ -7,8 +7,6 @@
         { eager: true, import: 'default' }
     );
 
-    debugger;
-
     // Фоновая боковая плашка
     const bgModules = import.meta.glob(
         '/assets/reviews/review-bg.{png,jpg,webp}',
@@ -120,14 +118,7 @@
         height: 650px;
         border-radius: 4px;
         overflow: hidden;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-        background-color: #f5f5f5;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .review-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
     }
 
     .review-card img {
