@@ -41,8 +41,11 @@
         </div>
 
         <div class="legal-col">
-            <p>ООО «ОС -ДК ИНВЕСТ»</p>
-            <p>УНП 693271542</p>
+            <p class="company-name">ООО «ОС -ДК ИНВЕСТ»</p>
+            <p class="unp">УНП 693271542</p>
+            <p class="disclaimer">
+                Данный веб-сайт носит исключительно справочный характер и информация на нем не является публичной офертой
+            </p>
         </div>
     </div>
 </footer>
@@ -97,7 +100,6 @@
         opacity: 0.8;
     }
 
-    /* Мессенджеры */
     .socials {
         display: flex;
         align-items: center;
@@ -121,18 +123,17 @@
     }
 
     .social-link.telegram {
-        background-image: url('/images/tg-white.svg');
+        background-image: url('/images/telegram.svg');
     }
 
     .social-link.viber {
-        background-image: url('/images/viber-white.svg');
+        background-image: url('/images/viber.svg');
     }
 
     .social-link.instagram {
-        background-image: url('/images/ig-white.png');
+        background-image: url('/images/iista.svg');
     }
 
-    /* Текстовые подписи */
     .schedule p,
     .legal-col p {
         margin: 0;
@@ -144,9 +145,25 @@
 
     .legal-col {
         text-align: right;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
     }
 
-    /* ---------------- Адаптив под мобилку (по макету 390px) ---------------- */
+    .company-name {
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .disclaimer {
+        margin-top: 10px !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+        color: #9e9e9e !important;
+    }
+
+    /* ---------------- Адаптив под мобилку (<= 768px) ---------------- */
     @media (max-width: 768px) {
         .footer {
             padding: 40px 24px 48px;
@@ -192,7 +209,14 @@
 
         .legal-col {
             text-align: left;
-            margin-top: 4px;
+            margin-top: 6px;
+            max-width: 100%;
+        }
+
+        .disclaimer {
+            margin-top: 8px !important;
+            font-size: 11.5px !important;
+            color: #aaaaaa !important;
         }
     }
 </style>
