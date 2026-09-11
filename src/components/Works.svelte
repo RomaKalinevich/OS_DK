@@ -80,7 +80,7 @@
         <!-- Заголовок появляется плавно сверху -->
         <div
                 class="header-block works-header-anim"
-                use:reveal={{ offset: '-30px', delay: 50 }}
+                use:reveal={{ offset: '-40px', delay: 80 }}
         >
             <h2 class="title">Наши работы</h2>
             <p class="subtitle">
@@ -94,7 +94,7 @@
                 <article
                         class="work-card work-card-anim"
                         class:reverse={item.reverse}
-                        use:reveal={{ offset: '-10px', delay: 30 }}
+                        use:reveal={{ offset: '-50px', delay: 60 }}
                 >
                     <!-- Слайдер фотографий -->
                     <div class="image-wrapper">
@@ -413,7 +413,7 @@
     }
 
     /* -------------------------------------------------------------
-       Анимации карточек и заголовка
+       Анимации карточек и заголовка (Десктоп)
     ------------------------------------------------------------- */
 
     /* Заголовок: деликатный блюр и опускание */
@@ -462,7 +462,7 @@
     }
 
     /* -------------------------------------------------------------
-        Адаптация анимаций под мобильные устройства (<= 992px)
+        Плавная адаптация анимаций под мобильные устройства (<= 992px)
      ------------------------------------------------------------- */
     @media (max-width: 992px) {
         .works-section {
@@ -489,21 +489,29 @@
             padding: 28px 18px;
         }
 
-        /* 1. Заголовок: убираем blur, уменьшаем сдвиг и ускоряем */
+        /* 1. Заголовок: мягкий подъем без резкого старта */
         :global(.works-header-anim.reveal-init) {
             filter: none !important;
-            transform: translateY(10px) !important;
-            transition-duration: 0.35s !important;
-        }
-
-        /* 2. Карточка: мягкий короткий подъем (12px вместо 28px) за 0.38s */
-        :global(.work-card-anim.reveal-init) {
             transform: translateY(12px) !important;
-            transition-duration: 0.38s !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+            transition: opacity 0.5s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
 
-        /* 3. Отключаем задержки пунктов списка: текст появляется сразу вместе с карточкой */
+        /* 2. Карточка: плавный шелковистый подъем (0.55s) с микромасштабом */
+        :global(.work-card-anim.reveal-init) {
+            transform: translateY(14px) scale(0.988) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+            transition: opacity 0.5s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.55s ease !important;
+        }
+
+        :global(.work-card-anim.revealed) {
+            transform: translateY(0) scale(1) !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07) !important;
+        }
+
+        /* 3. Список не выпрыгивает ступенями, а органично встроен в появление карточки */
         :global(.work-card-anim.revealed) .points-list li {
             animation: none !important;
             opacity: 1 !important;
