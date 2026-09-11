@@ -18,14 +18,14 @@
     <div class="container">
         <h2
                 class="title benefits-header-anim"
-                use:reveal={{ offset: '-30px', delay: 50 }}
+                use:reveal={{ offset: '-40px', delay: 40 }}
         >
             Выгодное сотрудничество
         </h2>
 
         <div
                 class="benefits-grid benefits-cards-anim"
-                use:reveal={{ offset: '-50px', delay: 100 }}
+                use:reveal={{ offset: '-40px', delay: 60 }}
         >
             {#each benefits as item}
                 <div class="benefit-card">
@@ -141,7 +141,7 @@
         transition-delay: 0.34s;
     }
 
-    /* ---------------- Мобильные стили и адаптация анимации ---------------- */
+    /* ---------------- Мобильные стили и плавная адаптация анимации ---------------- */
     @media (max-width: 992px) {
         .benefits-grid {
             grid-template-columns: 1fr;
@@ -157,19 +157,27 @@
             margin-bottom: 40px;
         }
 
-        /* Адаптация анимации под мобильные экраны */
+        /* 1. Заголовок: мягкое проявление без резкого рывка */
         :global(.benefits-header-anim.reveal-init) {
             transform: translateY(10px) !important;
-            transition-duration: 0.35s !important;
+            transition: opacity 0.45s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
 
+        /* 2. Карточки: мягкий подъем 12px с микромасштабом и увеличенной длительностью */
         :global(.benefits-cards-anim.reveal-init) .benefit-card {
-            transform: translateY(12px) !important;
-            transition-duration: 0.38s !important;
+            transform: translateY(12px) scale(0.988) !important;
+            transition: opacity 0.48s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
 
-        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(1) { transition-delay: 0.04s !important; }
-        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(2) { transition-delay: 0.08s !important; }
-        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(3) { transition-delay: 0.12s !important; }
+        :global(.benefits-cards-anim.revealed) .benefit-card {
+            transform: translateY(0) scale(1) !important;
+        }
+
+        /* 3. Спокойный последовательный каскад для одной колонки */
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(1) { transition-delay: 0.08s !important; }
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(2) { transition-delay: 0.16s !important; }
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(3) { transition-delay: 0.24s !important; }
     }
 </style>

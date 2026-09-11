@@ -1,4 +1,6 @@
 <script>
+    import { reveal } from '../actions/reveal.js';
+
     const imageModules = import.meta.glob(
         '/assets/catalog/*.{jpg,jpeg,png,webp}',
         { eager: true, import: 'default' }
@@ -60,11 +62,19 @@
 
 <section id="furniture" class="catalog-section">
     <div class="container">
-        <h2 class="title">Каталог уже установленной мебели</h2>
+        <h2
+                class="title catalog-header-anim"
+                use:reveal={{ offset: '-40px', delay: 40 }}
+        >
+            Каталог уже установленной мебели
+        </h2>
 
         {#if pages.length > 0}
             {@const pageStartIndex = currentPage * PAGE_SIZE}
-            <div class="collage-wrapper">
+            <div
+                    class="collage-wrapper catalog-grid-anim"
+                    use:reveal={{ offset: '-50px', delay: 80 }}
+            >
                 {#if pages.length > 1}
                     <button class="nav-btn prev" on:click={prevPage} aria-label="Предыдущая страница">
                         <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
@@ -73,44 +83,46 @@
                     </button>
                 {/if}
 
-                <div class="collage-grid">
-                    <!-- Левая колонка -->
-                    <div class="grid-col side-col">
-                        {#if images[pageStartIndex]}
-                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex)}>
-                                <img src={images[pageStartIndex]} alt="Мебель 1" loading="lazy" />
-                            </button>
-                        {/if}
-                        {#if images[pageStartIndex + 1]}
-                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 1)}>
-                                <img src={images[pageStartIndex + 1]} alt="Мебель 2" loading="lazy" />
-                            </button>
-                        {/if}
-                    </div>
+                {#key currentPage}
+                    <div class="collage-grid page-fade-anim">
+                        <!-- Левая колонка -->
+                        <div class="grid-col side-col">
+                            {#if images[pageStartIndex]}
+                                <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex)}>
+                                    <img src={images[pageStartIndex]} alt="Мебель 1" loading="lazy" />
+                                </button>
+                            {/if}
+                            {#if images[pageStartIndex + 1]}
+                                <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 1)}>
+                                    <img src={images[pageStartIndex + 1]} alt="Мебель 2" loading="lazy" />
+                                </button>
+                            {/if}
+                        </div>
 
-                    <!-- Центральная колонка -->
-                    <div class="grid-col center-col">
-                        {#if images[pageStartIndex + 2]}
-                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 2)}>
-                                <img src={images[pageStartIndex + 2]} alt="Мебель 3" loading="lazy" />
-                            </button>
-                        {/if}
-                    </div>
+                        <!-- Центральная колонка -->
+                        <div class="grid-col center-col">
+                            {#if images[pageStartIndex + 2]}
+                                <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 2)}>
+                                    <img src={images[pageStartIndex + 2]} alt="Мебель 3" loading="lazy" />
+                                </button>
+                            {/if}
+                        </div>
 
-                    <!-- Правая колонка -->
-                    <div class="grid-col side-col">
-                        {#if images[pageStartIndex + 3]}
-                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 3)}>
-                                <img src={images[pageStartIndex + 3]} alt="Мебель 4" loading="lazy" />
-                            </button>
-                        {/if}
-                        {#if images[pageStartIndex + 4]}
-                            <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 4)}>
-                                <img src={images[pageStartIndex + 4]} alt="Мебель 5" loading="lazy" />
-                            </button>
-                        {/if}
+                        <!-- Правая колонка -->
+                        <div class="grid-col side-col">
+                            {#if images[pageStartIndex + 3]}
+                                <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 3)}>
+                                    <img src={images[pageStartIndex + 3]} alt="Мебель 4" loading="lazy" />
+                                </button>
+                            {/if}
+                            {#if images[pageStartIndex + 4]}
+                                <button type="button" class="img-box" on:click={() => openModalByIndex(pageStartIndex + 4)}>
+                                    <img src={images[pageStartIndex + 4]} alt="Мебель 5" loading="lazy" />
+                                </button>
+                            {/if}
+                        </div>
                     </div>
-                </div>
+                {/key}
 
                 {#if pages.length > 1}
                     <button class="nav-btn next" on:click={nextPage} aria-label="Следующая страница">
@@ -236,6 +248,16 @@
         width: 100%;
     }
 
+    /* Мягкая плавная смена страниц без дерганий */
+    .page-fade-anim {
+        animation: pageFade 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes pageFade {
+        from { opacity: 0.3; transform: scale(0.995); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
     .grid-col {
         min-width: 0;
         min-height: 0;
@@ -334,6 +356,33 @@
         color: #888888;
     }
 
+    /* ---------------- Анимации блока (Десктоп) ---------------- */
+    :global(.catalog-header-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    :global(.catalog-header-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    :global(.catalog-grid-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    :global(.catalog-grid-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
     /* Модальное окно */
     .lightbox {
         position: fixed;
@@ -344,6 +393,7 @@
         z-index: 1000;
         padding: 24px;
         outline: none;
+        animation: modalFadeIn 0.2s ease-out;
     }
 
     .lightbox-backdrop {
@@ -366,6 +416,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        animation: modalZoomIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .lightbox-content img {
@@ -375,6 +426,16 @@
         border-radius: 4px;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
         user-select: none;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes modalZoomIn {
+        from { opacity: 0; transform: scale(0.94); }
+        to { opacity: 1; transform: scale(1); }
     }
 
     .close-btn {
@@ -424,6 +485,7 @@
         font-weight: 500;
     }
 
+    /* ---------------- Адаптив под мобилку (<= 900px) ---------------- */
     @media (max-width: 900px) {
         .collage-grid {
             grid-template-columns: 1fr;
@@ -443,5 +505,22 @@
 
         .modal-nav-btn.prev { left: 8px; }
         .modal-nav-btn.next { right: 8px; }
+
+        /* Плавное, мягкое мобильное появление без рывка */
+        :global(.catalog-header-anim.reveal-init) {
+            transform: translateY(10px) !important;
+            transition: opacity 0.45s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+
+        :global(.catalog-grid-anim.reveal-init) {
+            transform: translateY(12px) scale(0.99) !important;
+            transition: opacity 0.48s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+
+        :global(.catalog-grid-anim.revealed) {
+            transform: translateY(0) scale(1) !important;
+        }
     }
 </style>
