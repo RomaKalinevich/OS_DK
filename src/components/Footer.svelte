@@ -131,7 +131,7 @@
     }
 
     .social-link.instagram {
-        background-image: url('/images/ig-white.png');
+        background-image: url('/images/ig-white.svg');
     }
 
     .schedule p,
