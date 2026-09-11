@@ -159,7 +159,7 @@
                 <form
                         class="lead-card hero-form-anim"
                         onsubmit={handleSubmit}
-                        use:reveal={{ offset: '50px', delay: 200 }}
+                        use:reveal={{ offset: '0px', delay: 180 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
@@ -532,6 +532,7 @@
             margin-bottom: 32px;
         }
 
+        /* 1 колонка шагов строго по макету */
         .features-grid {
             grid-template-columns: 1fr;
             gap: 18px;
@@ -552,6 +553,7 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
+        /* Форма по центру внизу */
         .hero-right {
             justify-content: center;
             width: 100%;
@@ -568,20 +570,23 @@
             margin-bottom: 20px;
         }
 
-        /* Шелковисто-плавный мобильный вход формы */
+        /* Начальное состояние формы на мобилке */
         :global(.hero-form-anim.reveal-init) {
             opacity: 0 !important;
-            transform: translateY(8px) scale(0.995) !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+            transform: translateY(14px) scale(0.99) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
             transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-            box-shadow 0.7s ease !important;
+            transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.65s ease !important;
+            will-change: opacity, transform;
         }
 
+        /* Плавный шелковистый вход с гарантированной задержкой */
         :global(.hero-form-anim.revealed) {
             opacity: 1 !important;
             transform: translateY(0) scale(1) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22) !important;
+            transition-delay: 0.2s !important;
         }
 
         :global(.hero-features-anim.reveal-init) .feature-item {
