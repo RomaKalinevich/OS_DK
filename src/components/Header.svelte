@@ -23,7 +23,7 @@
         <a href="#contact">Контакты</a>
     </nav>
 
-    <!-- Мобильная серая полоска с бургером -->
+    <!-- Мобильная серая полоска: бургер слева, соцсети справа -->
     <div class="mobile-top-bar">
         <button
                 type="button"
@@ -35,6 +35,32 @@
             <span></span>
             <span></span>
         </button>
+
+        <div class="mobile-top-socials">
+            <a
+                    href="https://t.me/+375293916585"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Telegram"
+                    class="social-link telegram"
+            ></a>
+
+            <a
+                    href="viber://chat?number=%2B375293916585"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Viber"
+                    class="social-link viber"
+            ></a>
+
+            <a
+                    href="https://www.instagram.com/os.dk.mebel"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    class="social-link instagram"
+            ></a>
+        </div>
     </div>
 
     <!-- Десктопный нижний бар (на мобилке скрывается) -->
@@ -91,32 +117,6 @@
         <a href="tel:+375293916585">+375 29 391 65 85 (A1)</a>
         <a href="tel:+375297216585">+375 29 721 65 85 (МТС)</a>
     </div>
-
-    <div class="socials">
-        <a
-                href="https://t.me/+375293916585"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Telegram"
-                class="social-link telegram"
-        ></a>
-
-        <a
-                href="viber://chat?number=%2B375293916585"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Viber"
-                class="social-link viber"
-        ></a>
-
-        <a
-                href="https://www.instagram.com/os.dk.mebel"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                class="social-link instagram"
-        ></a>
-    </div>
 </div>
 
 <!-- Затемнение фона при открытом меню -->
@@ -124,7 +124,7 @@
     <div class="menu-backdrop" onclick={closeMenu} role="presentation"></div>
 {/if}
 
-<!-- Выезжающая справа шторка мобильного меню -->
+<!-- Выезжающая слева шторка мобильного меню -->
 <aside class="mobile-drawer" class:open={isMenuOpen}>
     <div class="drawer-header">
         <button type="button" class="close-btn" onclick={closeMenu} aria-label="Закрыть">
@@ -273,12 +273,6 @@
         background-image: url('/images/viber.svg');
     }
 
-    .social-link.instagram-circle {
-        width: 36px;
-        height: 36px;
-        background-image: url('/images/iista.svg');
-    }
-
     /* Скрыты на десктопе */
     .mobile-top-bar,
     .mobile-static-info,
@@ -294,14 +288,15 @@
             display: none;
         }
 
-        /* Серая полоска меню сверху */
+        /* Серая полоска меню сверху: бургер слева, соцсети справа */
         .mobile-top-bar {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             height: 52px;
             background-color: #E5E5E5;
-            position: relative;
+            padding: 0 16px;
+            box-sizing: border-box;
         }
 
         .burger-btn {
@@ -316,6 +311,7 @@
             height: 44px;
             cursor: pointer;
             padding: 0;
+            margin-left: -6px;
         }
 
         .burger-btn span {
@@ -326,7 +322,18 @@
             border-radius: 2px;
         }
 
-        /* Белый блок с контактами под шапкой */
+        .mobile-top-socials {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-top-socials .social-link {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Белый блок с контактами под шапкой (без соцсетей) */
         .mobile-static-info {
             display: flex;
             flex-direction: column;
@@ -334,8 +341,8 @@
             background-color: #ffffff;
             padding: 24px 20px 20px;
             text-align: center;
-            gap: 14px;
-            margin-top: 52px; /* компенсация высоты fixed шапки */
+            gap: 12px;
+            margin-top: 52px;
         }
 
         .mobile-static-info .logo strong {
@@ -353,26 +360,22 @@
             line-height: 1.4;
         }
 
-        .mobile-static-info .socials {
-            justify-content: center;
-            margin-top: 2px;
-        }
-
-        /* Выезжающая шторка справа */
+        /* Выезжающая шторка СЛЕВА */
         .mobile-drawer {
             display: flex;
             flex-direction: column;
             position: fixed;
             top: 0;
-            right: 0;
-            width: 68vw;
+            left: 0;
+            right: auto;
+            width: 72vw;
             max-width: 280px;
             height: 100vh;
             background-color: #ECECEC;
             z-index: 2000;
-            transform: translateX(100%);
+            transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         }
 
         .mobile-drawer.open {
@@ -382,7 +385,7 @@
         .drawer-header {
             height: 52px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: flex-start;
             align-items: center;
             padding: 0 16px;
         }
@@ -399,6 +402,7 @@
             height: 44px;
             cursor: pointer;
             padding: 0;
+            margin-left: -6px;
         }
 
         .close-btn span {
