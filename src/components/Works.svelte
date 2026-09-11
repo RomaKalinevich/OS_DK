@@ -94,7 +94,7 @@
                 <article
                         class="work-card work-card-anim"
                         class:reverse={item.reverse}
-                        use:reveal={{ offset: '-10px', delay: 60 }}
+                        use:reveal={{ offset: '-10px', delay: 30 }}
                 >
                     <!-- Слайдер фотографий -->
                     <div class="image-wrapper">
