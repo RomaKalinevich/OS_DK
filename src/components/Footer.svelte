@@ -103,7 +103,7 @@
     .socials {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
         margin-bottom: 24px;
     }
 

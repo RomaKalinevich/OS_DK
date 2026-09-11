@@ -242,7 +242,7 @@
 
     .socials {
         display: flex;
-        gap: 10px;
+        gap: 16px;
         justify-content: flex-end;
         align-items: center;
     }
