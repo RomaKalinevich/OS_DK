@@ -262,10 +262,14 @@
     }
 
     .social-link.telegram {
+        width: 30px;
+        height: 30px;
         background-image: url('/images/telegram.svg');
     }
 
     .social-link.viber {
+        width: 32px;
+        height: 32px;
         background-image: url('/images/viber.svg');
     }
 

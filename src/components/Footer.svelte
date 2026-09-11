@@ -123,15 +123,15 @@
     }
 
     .social-link.telegram {
-        background-image: url('/images/telegram.svg');
+        background-image: url('/images/tg-white.svg');
     }
 
     .social-link.viber {
-        background-image: url('/images/viber.svg');
+        background-image: url('/images/viber-white.svg');
     }
 
     .social-link.instagram {
-        background-image: url('/images/iista.svg');
+        background-image: url('/images/ig-white.png');
     }
 
     .schedule p,
