@@ -1,4 +1,6 @@
 <script>
+    import { reveal } from '../actions/reveal.js';
+
     const benefits = [
         {
             text: '17 лет опыта с самыми разнообразными заказами позволяют обеспечить максимальное качество мебели'
@@ -14,9 +16,17 @@
 
 <section class="benefits">
     <div class="container">
-        <h2 class="title">Выгодное сотрудничество</h2>
+        <h2
+                class="title benefits-header-anim"
+                use:reveal={{ offset: '-30px', delay: 50 }}
+        >
+            Выгодное сотрудничество
+        </h2>
 
-        <div class="benefits-grid">
+        <div
+                class="benefits-grid benefits-cards-anim"
+                use:reveal={{ offset: '-50px', delay: 100 }}
+        >
             {#each benefits as item}
                 <div class="benefit-card">
                     <div class="icon-wrap">
@@ -56,23 +66,29 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 32px;
     }
+
     .benefit-card {
         position: relative;
-        background-color: #F8F8F8; /* Светло-серый фон плашки */
+        background-color: #F8F8F8;
         border-radius: 2px;
-        padding: 56px 36px 40px;   /* Верхний padding увеличен, чтобы текст не наползал на иконку */
+        padding: 56px 36px 40px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         box-sizing: border-box;
+        transition: transform 0.25s ease;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-4px);
     }
 
     .icon-wrap {
         position: absolute;
         top: 0;
         left: 50%;
-        transform: translate(-50%, -50%); /* Центрирует и выносит галочку ровно на верхнюю грань */
+        transform: translate(-50%, -50%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -87,6 +103,45 @@
         max-width: 342px;
     }
 
+    /* ---------------- Анимации (Десктоп) ---------------- */
+    :global(.benefits-header-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    :global(.benefits-header-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    :global(.benefits-cards-anim.reveal-init) .benefit-card {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(1) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.1s;
+    }
+    :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(2) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.22s;
+    }
+    :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(3) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.34s;
+    }
+
+    /* ---------------- Мобильные стили и адаптация анимации ---------------- */
     @media (max-width: 992px) {
         .benefits-grid {
             grid-template-columns: 1fr;
@@ -101,5 +156,20 @@
             font-size: 28px;
             margin-bottom: 40px;
         }
+
+        /* Адаптация анимации под мобильные экраны */
+        :global(.benefits-header-anim.reveal-init) {
+            transform: translateY(10px) !important;
+            transition-duration: 0.35s !important;
+        }
+
+        :global(.benefits-cards-anim.reveal-init) .benefit-card {
+            transform: translateY(12px) !important;
+            transition-duration: 0.38s !important;
+        }
+
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(1) { transition-delay: 0.04s !important; }
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(2) { transition-delay: 0.08s !important; }
+        :global(.benefits-cards-anim.revealed) .benefit-card:nth-child(3) { transition-delay: 0.12s !important; }
     }
 </style>
