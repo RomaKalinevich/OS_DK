@@ -103,7 +103,8 @@
                 body: JSON.stringify({
                     name: name.trim(),
                     phone: phone.trim(),
-                    email: 'Заявка на скидку 10% (Hero)'
+                    email: '',
+                    note: 'Заявка на скидку 10%'
                 })
             });
 
@@ -532,7 +533,6 @@
             margin-bottom: 32px;
         }
 
-        /* 1 колонка шагов строго по макету */
         .features-grid {
             grid-template-columns: 1fr;
             gap: 18px;
@@ -553,7 +553,6 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Форма по центру внизу */
         .hero-right {
             justify-content: center;
             width: 100%;
@@ -570,7 +569,6 @@
             margin-bottom: 20px;
         }
 
-        /* Максимально мягкое скрытое состояние формы */
         :global(.hero-form-anim.reveal-init) {
             opacity: 0 !important;
             transform: translateY(6px) !important;
@@ -582,7 +580,6 @@
             will-change: opacity, transform, box-shadow;
         }
 
-        /* Шелковистый набор плотности и глубины с задержкой */
         :global(.hero-form-anim.revealed) {
             opacity: 1 !important;
             transform: translateY(0) !important;
@@ -590,7 +587,6 @@
             transition-delay: 0.15s !important;
         }
 
-        /* Шаги преимуществ */
         :global(.hero-features-anim.reveal-init) .feature-item {
             transform: translateY(10px) !important;
             transition: opacity 0.45s ease-out,

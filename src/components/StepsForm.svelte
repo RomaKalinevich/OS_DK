@@ -1,14 +1,14 @@
 <script>
     import { reveal } from '../actions/reveal.js';
 
-    let name = '';
-    let phone = '';
-    let email = '';
-    let agreed = false;
+    let name = $state('');
+    let phone = $state('');
+    let email = $state('');
+    let agreed = $state(false);
 
-    let isSubmitting = false;
-    let isSuccess = false;
-    let errorMessage = '';
+    let isSubmitting = $state(false);
+    let isSuccess = $state(false);
+    let errorMessage = $state('');
 
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
 
@@ -111,7 +111,8 @@
                 body: JSON.stringify({
                     name: name.trim(),
                     phone: phone.trim(),
-                    email: email.trim() || 'Заявка из блока этапов (StepsForm)'
+                    email: email.trim(),
+                    note: 'Заявка на просчет'
                 })
             });
 
@@ -156,15 +157,15 @@
             <div class="steps-right">
                 <form
                         class="lead-card steps-form-anim"
-                        on:submit={handleSubmit}
-                        use:reveal={{ offset: '-80px', delay: 200 }}
+                        onsubmit={handleSubmit}
+                        use:reveal={{ offset: '-40px', delay: 100 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
                             <div class="success-icon">✓</div>
                             <h3 class="card-title">Заявка принята!</h3>
                             <p class="success-text">Мы свяжемся с вами в ближайшее время для обсуждения деталей.</p>
-                            <button type="button" class="submit-btn" on:click={() => (isSuccess = false)}>
+                            <button type="button" class="submit-btn" onclick={() => (isSuccess = false)}>
                                 Отправить еще одну
                             </button>
                         </div>
@@ -180,6 +181,7 @@
                             <input
                                     id="step-name"
                                     type="text"
+                                    placeholder="Ваше имя"
                                     bind:value={name}
                                     disabled={isSubmitting}
                                     required
@@ -193,10 +195,10 @@
                                     type="tel"
                                     placeholder="+375 (__) ___-__-__"
                                     value={phone}
-                                    on:input={handlePhoneInput}
-                                    on:focus={handlePhoneFocus}
-                                    on:blur={handlePhoneBlur}
-                                    on:keydown={handlePhoneKeyDown}
+                                    oninput={handlePhoneInput}
+                                    onfocus={handlePhoneFocus}
+                                    onblur={handlePhoneBlur}
+                                    onkeydown={handlePhoneKeyDown}
                                     maxlength="19"
                                     disabled={isSubmitting}
                                     required
@@ -208,6 +210,7 @@
                             <input
                                     id="step-email"
                                     type="email"
+                                    placeholder="example@mail.ru"
                                     bind:value={email}
                                     disabled={isSubmitting}
                             />
@@ -245,13 +248,14 @@
 </section>
 
 <style>
+    /* Десктопная анимация появления формы */
     :global(.steps-form-anim.reveal-init) {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(24px);
         box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-        transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1),
-        transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
-        box-shadow 0.7s ease-out;
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.75s ease-out;
         will-change: opacity, transform;
     }
 
@@ -484,7 +488,7 @@
         line-height: 1.4;
     }
 
-    /* ---------------- Адаптация под 390px (по макету) ---------------- */
+    /* ---------------- Мобильная адаптация (<= 992px) ---------------- */
     @media (max-width: 992px) {
         .steps-section {
             padding: 44px 16px 54px;
@@ -549,6 +553,25 @@
         .submit-btn {
             height: 46px;
             font-size: 16px;
+        }
+
+        /* Ультра-плавное мобильное появление формы */
+        :global(.steps-form-anim.reveal-init) {
+            opacity: 0 !important;
+            transform: translateY(6px) !important;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+            transition:
+                    opacity 0.95s cubic-bezier(0.25, 0.1, 0.25, 1),
+                    transform 1.05s cubic-bezier(0.12, 0.98, 0.24, 1),
+                    box-shadow 1.1s ease !important;
+            will-change: opacity, transform, box-shadow;
+        }
+
+        :global(.steps-form-anim.revealed) {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+            transition-delay: 0.12s !important;
         }
     }
 </style>
