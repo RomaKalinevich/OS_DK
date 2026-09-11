@@ -159,7 +159,7 @@
                 <form
                         class="lead-card hero-form-anim"
                         onsubmit={handleSubmit}
-                        use:reveal={{ offset: '0px', delay: 0 }}
+                        use:reveal={{ offset: '50px', delay: 200 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
