@@ -1,7 +1,7 @@
 <script>
     import { reveal } from '../actions/reveal.js';
 
-    // Автоматический импорт всех отзывов через Vite (попадает в dist на Render)
+    // Автоматический импорт всех отзывов через Vite
     const reviewModules = import.meta.glob(
         '/assets/reviews/*.{jpg,jpeg,png,webp}',
         { eager: true, import: 'default' }
@@ -14,11 +14,32 @@
     );
     const sideImage = Object.values(bgModules)[0] || '/assets/reviews/review-bg.png';
 
-    // Оставляем только фото отзывов, сортируя по имени (review-1, review-2, review-3)
-    const reviews = Object.entries(reviewModules)
+    // Оставляем только отзывы без фоновой картинки
+    let loadedReviews = Object.entries(reviewModules)
         .filter(([path]) => !path.includes('review-bg'))
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([_, mod]) => mod);
+
+    const fallbackReviews = [
+        '/assets/reviews/review-1.jpg',
+        '/assets/reviews/review-2.jpg',
+        '/assets/reviews/review-3.jpg'
+    ];
+
+    const reviews = loadedReviews.length > 0 ? loadedReviews : fallbackReviews;
+
+    // Индекс активного отзыва для мобильного слайдера
+    let activeMobileIndex = $state(0);
+
+    function prevReview() {
+        if (!reviews.length) return;
+        activeMobileIndex = (activeMobileIndex - 1 + reviews.length) % reviews.length;
+    }
+
+    function nextReview() {
+        if (!reviews.length) return;
+        activeMobileIndex = (activeMobileIndex + 1) % reviews.length;
+    }
 </script>
 
 <section id="reviews" class="reviews-section">
@@ -37,7 +58,7 @@
             <p class="subtitle">что говорят наши клиенты</p>
         </div>
 
-        <!-- Ряд карточек с каскадным появлением -->
+        <!-- Десктопный вид: 3 карточки в ряд -->
         <div
                 class="reviews-row reviews-grid-anim"
                 use:reveal={{ offset: '-80px', delay: 150 }}
@@ -48,6 +69,44 @@
                 </div>
             {/each}
         </div>
+
+        <!-- Мобильный вид (строго по макету 390px): 1 карточка + стрелки снизу слева -->
+        <div class="mobile-reviews-block">
+            <div class="mobile-slider">
+                {#each reviews as img, i}
+                    <div
+                            class="mobile-review-card"
+                            class:active={activeMobileIndex === i}
+                    >
+                        <img src={img} alt="Отзыв клиента {i + 1}" loading="lazy" />
+                    </div>
+                {/each}
+            </div>
+
+            <div class="mobile-arrows">
+                <button
+                        type="button"
+                        class="arrow-btn"
+                        onclick={prevReview}
+                        aria-label="Предыдущий отзыв"
+                >
+                    <svg width="8" height="14" viewBox="0 0 10 16" fill="none">
+                        <path d="M8.5 1.5L2 8L8.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <button
+                        type="button"
+                        class="arrow-btn"
+                        onclick={nextReview}
+                        aria-label="Следующий отзыв"
+                >
+                    <svg width="8" height="14" viewBox="0 0 10 16" fill="none">
+                        <path d="M1.5 1.5L8 8L1.5 14.5" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -55,21 +114,20 @@
     .reviews-section {
         position: relative;
         width: 100%;
-        min-height: 650px;
         background-color: #ffffff;
         display: flex;
         align-items: center;
         overflow: hidden;
         box-sizing: border-box;
-        padding: 80px 0;
+        padding: 60px 0 70px;
     }
 
     .side-photo {
         position: absolute;
         top: 0;
         right: 0;
-        width: 40vw;
-        min-width: 420px;
+        width: 36vw;
+        min-width: 360px;
         height: 100%;
         background-size: cover;
         background-position: left center;
@@ -84,53 +142,61 @@
         width: 100%;
         max-width: 1345px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 40px;
         box-sizing: border-box;
     }
 
     .header-block {
-        margin-bottom: 36px;
+        margin-bottom: 30px;
     }
 
     .title {
-        font-size: 38px;
+        font-size: 34px;
         font-weight: 700;
         color: #000000;
-        margin: 0 0 8px 0;
+        margin: 0 0 6px 0;
     }
 
     .subtitle {
-        font-size: 20px;
+        font-size: 17px;
         font-weight: 400;
         color: #8B9098;
         margin: 0;
     }
 
+    /* ---------------- Десктопный ряд ---------------- */
     .reviews-row {
         display: flex;
         align-items: flex-start;
-        gap: 28px;
+        gap: 24px;
     }
 
     .review-card {
-        flex: 0 0 345px;
-        width: 345px;
-        height: 650px;
+        flex: 0 0 260px;
+        width: 260px;
+        height: 500px;
         border-radius: 4px;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: transparent;
+        transition: transform 0.25s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-4px);
     }
 
     .review-card img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
     }
 
-    /* -------------------------------------------------------------
-       Анимации блока отзывов
-    ------------------------------------------------------------- */
+    .mobile-reviews-block {
+        display: none;
+    }
+
+    /* ---------------- Анимации блока отзывов ---------------- */
     :global(.reviews-header-anim.reveal-init) {
         opacity: 0;
         transform: translateY(20px);
@@ -147,16 +213,14 @@
         filter: blur(0);
     }
 
-    /* Карточки скрыты до срабатывания */
     :global(.reviews-grid-anim.reveal-init) .review-card {
         opacity: 0;
-        transform: translateY(28px) scale(0.98);
+        transform: translateY(24px) scale(0.98);
         transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
         transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         will-change: opacity, transform;
     }
 
-    /* Каскадное появление отзывов один за другим */
     :global(.reviews-grid-anim.revealed) .review-card:nth-child(1) {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -179,32 +243,106 @@
         }
 
         .review-card {
-            flex: 0 0 290px;
-            width: 290px;
-            height: 550px;
+            flex: 0 0 230px;
+            width: 230px;
+            height: 450px;
         }
 
         .side-photo {
-            width: 32vw;
-            min-width: 300px;
+            width: 30vw;
+            min-width: 280px;
         }
     }
 
+    /* ---------------- Мобильная адаптация (390px) ---------------- */
     @media (max-width: 992px) {
-        .side-photo {
+        .side-photo,
+        .reviews-row {
             display: none;
         }
 
-        .reviews-row {
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+        .reviews-section {
+            padding: 40px 0 46px;
         }
 
-        .review-card {
-            flex: 0 0 320px;
-            width: 320px;
-            height: 580px;
+        .container {
+            padding: 0 20px;
+        }
+
+        .header-block {
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+        }
+
+        .mobile-reviews-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        /* 1 карточка по центру */
+        .mobile-slider {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+            height: 460px;
+            margin: 0 auto;
+        }
+
+        .mobile-review-card {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+        }
+
+        .mobile-review-card.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-review-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Желтые стрелки внизу слева строго по макету */
+        .mobile-arrows {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+            padding-left: 2px;
+        }
+
+        .arrow-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #FFC700;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(255, 199, 0, 0.35);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .arrow-btn:active {
+            transform: scale(0.92);
         }
     }
 </style>
