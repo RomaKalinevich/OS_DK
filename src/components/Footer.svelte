@@ -1,16 +1,42 @@
-<footer id="contacts" class="footer">
+<footer id="contact" class="footer">
     <div class="container">
         <div class="contacts-col">
-            <h2>Контакты</h2>
+            <h2 class="title">Контакты</h2>
 
             <div class="phones">
                 <a href="tel:+375293916585">+375 29 391 65 85 (A1)</a>
                 <a href="tel:+375297216585">+375 29 721 65 85 (МТС)</a>
             </div>
 
+            <!-- Соцсети и мессенджеры -->
+            <div class="socials">
+                <a
+                        href="https://t.me/+375293916585"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Telegram"
+                        class="social-link telegram"
+                ></a>
+                <a
+                        href="viber://chat?number=%2B375293916585"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Viber"
+                        class="social-link viber"
+                ></a>
+                <a
+                        href="https://www.instagram.com/os.dk.mebel"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
+                        class="social-link instagram"
+                ></a>
+            </div>
+
             <div class="schedule">
                 <p>Режим работы:</p>
-                <p>С 8:00 до 22:00 (без выходных)</p>
+                <p>С 8:00 до 22:00</p>
+                <p>без выходных</p>
             </div>
         </div>
 
@@ -23,35 +49,39 @@
 
 <style>
     .footer {
-        /* Обязательно скопируйте точный цвет фона из Figma, сейчас здесь примерный */
-        background-color: #4a4a4a;
+        background-color: #3f3f3f;
         color: #ffffff;
         padding: 60px 40px;
         font-family: 'Montserrat', sans-serif;
     }
 
     .container {
-        max-width: 1400px; /* Ориентируйтесь на ширину контейнера в макете */
+        max-width: 1400px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
         flex-wrap: wrap;
-        gap: 30px;
+        gap: 32px;
     }
 
-    .contacts-col h2 {
+    .contacts-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title {
         font-size: 38px;
         font-weight: 700;
         margin: 0 0 24px 0;
+        color: #ffffff;
     }
-
 
     .phones {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
 
     .phones a {
@@ -59,34 +89,110 @@
         text-decoration: none;
         font-size: 22px;
         font-weight: 700;
-        transition: opacity 0.2s;
+        line-height: 1.35;
+        transition: opacity 0.2s ease;
     }
 
     .phones a:hover {
         opacity: 0.8;
     }
 
-    /* Стили для серого текста (режим работы и УНП) */
-    .schedule p, .legal-col p {
+    /* Мессенджеры */
+    .socials {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .social-link {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+
+    .social-link:hover {
+        opacity: 0.8;
+        transform: translateY(-2px);
+    }
+
+    .social-link.telegram {
+        background-image: url('/images/tg-white.svg');
+    }
+
+    .social-link.viber {
+        background-image: url('/images/viber-white.svg');
+    }
+
+    .social-link.instagram {
+        background-image: url('/images/ig-white.png');
+    }
+
+    /* Текстовые подписи */
+    .schedule p,
+    .legal-col p {
         margin: 0;
-        /* Замените на точный цвет из Figma */
-        color: #cccccc;
-        font-size: 14px;
+        color: #d1d1d1;
+        font-size: 15px;
         line-height: 1.5;
+        font-weight: 400;
     }
 
     .legal-col {
         text-align: right;
     }
 
+    /* ---------------- Адаптив под мобилку (по макету 390px) ---------------- */
     @media (max-width: 768px) {
+        .footer {
+            padding: 40px 24px 48px;
+        }
+
         .container {
             flex-direction: column;
             align-items: flex-start;
+            gap: 28px;
         }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .phones {
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .phones a {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .socials {
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+
+        .social-link {
+            width: 28px;
+            height: 28px;
+        }
+
+        .schedule p,
+        .legal-col p {
+            font-size: 14px;
+            line-height: 1.45;
+            color: #d8d8d8;
+        }
+
         .legal-col {
             text-align: left;
-            margin-top: 10px;
+            margin-top: 4px;
         }
     }
 </style>

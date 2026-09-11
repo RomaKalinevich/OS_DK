@@ -54,6 +54,22 @@
 
         <div class="socials">
             <a
+                    href="https://t.me/+375293916585"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Telegram"
+                    class="social-link telegram"
+            ></a>
+
+            <a
+                    href="viber://chat?number=%2B375293916585"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Viber"
+                    class="social-link viber"
+            ></a>
+
+            <a
                     href="https://www.instagram.com/os.dk.mebel"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -78,11 +94,27 @@
 
     <div class="socials">
         <a
+                href="https://t.me/+375293916585"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram"
+                class="social-link telegram"
+        ></a>
+
+        <a
+                href="viber://chat?number=%2B375293916585"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Viber"
+                class="social-link viber"
+        ></a>
+
+        <a
                 href="https://www.instagram.com/os.dk.mebel"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                class="social-link instagram-circle"
+                class="social-link instagram"
         ></a>
     </div>
 </div>
@@ -210,6 +242,7 @@
 
     .socials {
         display: flex;
+        gap: 10px;
         justify-content: flex-end;
         align-items: center;
     }
@@ -226,6 +259,14 @@
 
     .social-link.instagram {
         background-image: url('/images/iista.svg');
+    }
+
+    .social-link.telegram {
+        background-image: url('/images/telegram.svg');
+    }
+
+    .social-link.viber {
+        background-image: url('/images/viber.svg');
     }
 
     .social-link.instagram-circle {
@@ -367,16 +408,16 @@
         .drawer-nav {
             display: flex;
             flex-direction: column;
-            padding: 16px 28px 40px;
+            padding: 0 24px;
             gap: 20px;
         }
 
         .drawer-nav a {
             text-decoration: none;
             font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 15px;
-            color: #262626;
+            font-weight: 600;
+            font-size: 16px;
+            color: #333333;
             transition: color 0.2s;
         }
 

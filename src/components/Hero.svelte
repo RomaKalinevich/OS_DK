@@ -15,7 +15,6 @@
     function formatPhone(val) {
         let digits = val.replace(/\D/g, '');
 
-        // Если пользователь начинает ввод с 80..., 375... или 7...
         if (digits.startsWith('80')) {
             digits = '375' + digits.slice(2);
         } else if (digits.startsWith('7')) {
@@ -24,10 +23,8 @@
             digits = '375' + digits;
         }
 
-        // 375 + ровно 9 цифр номера (всего 12 цифр)
         digits = digits.slice(0, 12);
-
-        const local = digits.slice(3); // цифры после 375
+        const local = digits.slice(3);
         let res = '+375';
 
         if (local.length > 0) {
@@ -68,7 +65,6 @@
     }
 
     function handlePhoneKeyDown(event) {
-        // Удобное стирание символов маски по Backspace
         if (event.key === 'Backspace') {
             const val = event.target.value;
             if (val.endsWith('-') || val.endsWith(') ') || val.endsWith('(')) {
@@ -84,7 +80,6 @@
         event.preventDefault();
         errorMessage = '';
 
-        // Проверка: код 375 + ровно 9 цифр
         const digits = phone.replace(/\D/g, '');
         if (digits.length !== 12) {
             errorMessage = 'Пожалуйста, введите полный номер телефона: +375 (XX) XXX-XX-XX';
@@ -249,8 +244,7 @@
 
     .hero-overlay {
         position: absolute;
-        inset: 0;
-        background: rgba(26, 26, 26, 0.72);
+        background: rgba(26, 26, 26, 0.78);
     }
 
     .container {
@@ -275,7 +269,7 @@
         font-size: 24px;
         font-weight: 400;
         line-height: 29px;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.75);
         margin-bottom: 12px;
     }
 
@@ -292,7 +286,7 @@
     .features-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 28px 13px;
+        gap: 28px 20px;
     }
 
     .feature-item {
@@ -301,18 +295,18 @@
         gap: 16px;
     }
 
-    .feature-item p {
-        margin: 0;
-        font-size: 20px;
-        line-height: 1.4;
-        color: #FFFFFF99;
-    }
-
     .feature-icon {
         width: 96px;
         height: 96px;
         object-fit: contain;
         flex-shrink: 0;
+    }
+
+    .feature-item p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.35;
+        color: rgba(255, 255, 255, 0.85);
     }
 
     .hero-right {
@@ -324,7 +318,7 @@
         background: #ffffff;
         color: #1a1a1a;
         border-radius: 8px;
-        padding: 40px 36px;
+        padding: 40px 32px;
         width: 100%;
         max-width: 400px;
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
@@ -332,8 +326,8 @@
     }
 
     .lead-card h3 {
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 28px;
+        font-weight: 700;
         text-align: center;
         margin: 0 0 24px 0;
         color: #000000;
@@ -353,8 +347,8 @@
 
     .form-group label span,
     .checkbox-group label span {
-        font-size: 17px;
-        font-weight: 400;
+        font-size: 16px;
+        font-weight: 600;
         color: #eb5757;
     }
 
@@ -413,9 +407,8 @@
         border: none;
         border-radius: 4px;
         font-family: inherit;
-        font-size: 20px;
-        line-height: 20px;
-        font-weight: 400;
+        font-size: 18px;
+        font-weight: 600;
         cursor: pointer;
         transition: background-color 0.2s, transform 0.1s;
     }
@@ -470,10 +463,10 @@
         line-height: 1.4;
     }
 
-    /* Индивидуальная анимация формы в Hero: плавный въезд справа с масштабом */
+    /* ---------------- Анимации ---------------- */
     :global(.hero-form-anim.reveal-init) {
         opacity: 0;
-        transform: translateX(32px) scale(0.96);
+        transform: translateX(24px) scale(0.97);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
         transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
@@ -487,57 +480,91 @@
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
     }
 
-    /* Базовое скрытое состояние карточек шагов до триггера */
     :global(.hero-features-anim.reveal-init) .feature-item {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translateY(16px);
         transition: opacity 0.65s ease-out,
         transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
         will-change: opacity, transform;
     }
 
-    /* Каскадное появление по очереди при срабатывании */
-    :global(.hero-features-anim.revealed) .feature-item:nth-child(1) {
-        opacity: 1;
-        transform: translateY(0);
-        transition-delay: 0.05s;
-    }
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
 
-    :global(.hero-features-anim.revealed) .feature-item:nth-child(2) {
-        opacity: 1;
-        transform: translateY(0);
-        transition-delay: 0.15s;
-    }
-
-    :global(.hero-features-anim.revealed) .feature-item:nth-child(3) {
-        opacity: 1;
-        transform: translateY(0);
-        transition-delay: 0.25s;
-    }
-
-    :global(.hero-features-anim.revealed) .feature-item:nth-child(4) {
-        opacity: 1;
-        transform: translateY(0);
-        transition-delay: 0.35s;
-    }
-
+    /* ---------------- Адаптив под мобилку (390px) ---------------- */
     @media (max-width: 992px) {
+        .hero {
+            min-height: auto;
+            padding: 40px 0 60px;
+        }
+
+        .container {
+            padding: 0 20px;
+        }
+
         .hero-content {
             grid-template-columns: 1fr;
+            gap: 40px;
         }
 
-        .hero-right {
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .features-grid {
-            grid-template-columns: 1fr;
+        .subtitle {
+            font-size: 20px;
+            line-height: 24px;
+            font-weight: 400;
+            margin-bottom: 12px;
         }
 
         .title {
-            font-size: 30px;
+            font-size: 28px;
+            line-height: 1.25;
+            padding-left: 14px;
+            border-left-width: 3.5px;
+            margin-bottom: 32px;
+        }
+
+        /* 1 колонка шагов строго по макету */
+        .features-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .feature-item {
+            gap: 14px;
+        }
+
+        /* Иконка выводится как есть, без сторонней обводки */
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+        }
+
+        .feature-item p {
+            font-size: 14px;
+            line-height: 1.35;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Форма по центру внизу */
+        .hero-right {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .lead-card {
+            max-width: 100%;
+            padding: 32px 20px;
+            border-radius: 6px;
+        }
+
+        .lead-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        :global(.hero-form-anim.reveal-init) {
+            transform: translateY(20px) scale(0.98);
         }
     }
 </style>
