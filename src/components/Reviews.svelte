@@ -1,25 +1,49 @@
 <script>
-    export let reviews = [
-        '/assets/reviews/review-1.jpg',
-        '/assets/reviews/review-2.jpg',
-        '/assets/reviews/review-З.jpg'
-    ];
+    import { reveal } from '../actions/reveal.js';
 
-    export let sideImage = '/assets/reviews/review-bg.png';
+    // Автоматический импорт всех отзывов через Vite (попадает в dist на Render)
+    const reviewModules = import.meta.glob(
+        '/assets/reviews/*.{jpg,jpeg,png,webp}',
+        { eager: true, import: 'default' }
+    );
+
+    debugger;
+
+    // Фоновая боковая плашка
+    const bgModules = import.meta.glob(
+        '/assets/reviews/review-bg.{png,jpg,webp}',
+        { eager: true, import: 'default' }
+    );
+    const sideImage = Object.values(bgModules)[0] || '/assets/reviews/review-bg.png';
+
+    // Оставляем только фото отзывов, сортируя по имени (review-1, review-2, review-3)
+    const reviews = Object.entries(reviewModules)
+        .filter(([path]) => !path.includes('review-bg'))
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([_, mod]) => mod);
 </script>
 
 <section id="reviews" class="reviews-section">
-    <!-- Правая картинка со шкафом во всю высоту блока -->
-    <div class="side-photo" style="background-image: url('{sideImage}');"></div>
+    <!-- Боковое фото шкафа -->
+    {#if sideImage}
+        <div class="side-photo" style="background-image: url('{sideImage}');"></div>
+    {/if}
 
-    <!-- Контент, выровненный строго по базовой сетке 1160px -->
     <div class="container">
-        <div class="header-block">
+        <!-- Заголовок блока с анимацией -->
+        <div
+                class="header-block reviews-header-anim"
+                use:reveal={{ offset: '-40px', delay: 100 }}
+        >
             <h2 class="title">Нас рекомендуют</h2>
             <p class="subtitle">что говорят наши клиенты</p>
         </div>
 
-        <div class="reviews-row">
+        <!-- Ряд карточек с каскадным появлением -->
+        <div
+                class="reviews-row reviews-grid-anim"
+                use:reveal={{ offset: '-80px', delay: 150 }}
+        >
             {#each reviews as img, i}
                 <div class="review-card">
                     <img src={img} alt="Отзыв клиента {i + 1}" loading="lazy" />
@@ -42,7 +66,6 @@
         padding: 80px 0;
     }
 
-    /* Фото шкафа прибито к правому краю экрана и занимает ~38-40% ширины */
     .side-photo {
         position: absolute;
         top: 0;
@@ -54,15 +77,16 @@
         background-position: left center;
         background-repeat: no-repeat;
         z-index: 1;
+        pointer-events: none;
     }
 
-    /* Общий контейнер строго по сетке предыдущих блоков (Каталог / Форма) */
     .container {
         position: relative;
         z-index: 2;
         width: 100%;
         max-width: 1345px;
         margin: 0 auto;
+        padding: 0 20px;
         box-sizing: border-box;
     }
 
@@ -84,7 +108,6 @@
         margin: 0;
     }
 
-    /* Ряд из трех крупных карточек */
     .reviews-row {
         display: flex;
         align-items: flex-start;
@@ -93,12 +116,18 @@
 
     .review-card {
         flex: 0 0 345px;
-        width: 371px;
+        width: 345px;
         height: 650px;
         border-radius: 4px;
         overflow: hidden;
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-        background-color: #72b07e;
+        background-color: #f5f5f5;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
     }
 
     .review-card img {
@@ -106,6 +135,51 @@
         height: 100%;
         object-fit: cover;
         display: block;
+    }
+
+    /* -------------------------------------------------------------
+       Анимации блока отзывов
+    ------------------------------------------------------------- */
+    :global(.reviews-header-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(5px);
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.75s ease;
+        will-change: opacity, transform, filter;
+    }
+
+    :global(.reviews-header-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+
+    /* Карточки скрыты до срабатывания */
+    :global(.reviews-grid-anim.reveal-init) .review-card {
+        opacity: 0;
+        transform: translateY(28px) scale(0.98);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    /* Каскадное появление отзывов один за другим */
+    :global(.reviews-grid-anim.revealed) .review-card:nth-child(1) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition-delay: 0.1s;
+    }
+    :global(.reviews-grid-anim.revealed) .review-card:nth-child(2) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition-delay: 0.22s;
+    }
+    :global(.reviews-grid-anim.revealed) .review-card:nth-child(3) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition-delay: 0.34s;
     }
 
     @media (max-width: 1200px) {
@@ -116,7 +190,7 @@
         .review-card {
             flex: 0 0 290px;
             width: 290px;
-            height: 290px;
+            height: 520px;
         }
 
         .side-photo {
@@ -139,7 +213,7 @@
         .review-card {
             flex: 0 0 320px;
             width: 320px;
-            height: 320px;
+            height: 580px;
         }
     }
 </style>
