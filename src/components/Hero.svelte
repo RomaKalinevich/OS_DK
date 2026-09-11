@@ -131,7 +131,7 @@
 
                 <div
                         class="features-grid hero-features-anim"
-                        use:reveal={{ offset: '0px', delay: 100 }}
+                        use:reveal={{ offset: '0px', delay: 80 }}
                 >
                     <div class="feature-item">
                         <img class="feature-icon" src="/images/fill-application.png" alt="Шаг 1"/>
@@ -159,7 +159,7 @@
                 <form
                         class="lead-card hero-form-anim"
                         onsubmit={handleSubmit}
-                        use:reveal={{ offset: '0px', delay: 150 }}
+                        use:reveal={{ offset: '0px', delay: 0 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
@@ -532,7 +532,6 @@
             margin-bottom: 32px;
         }
 
-        /* 1 колонка шагов строго по макету */
         .features-grid {
             grid-template-columns: 1fr;
             gap: 18px;
@@ -553,7 +552,6 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Форма по центру внизу */
         .hero-right {
             justify-content: center;
             width: 100%;
@@ -570,30 +568,31 @@
             margin-bottom: 20px;
         }
 
-        /* Мягкая мобильная анимация карточки (вертикальный вход вместо бокового) */
+        /* Шелковисто-плавный мобильный вход формы */
         :global(.hero-form-anim.reveal-init) {
-            transform: translateY(12px) scale(0.99) !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
-            transition: opacity 0.48s ease-out,
-            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-            box-shadow 0.55s ease !important;
+            opacity: 0 !important;
+            transform: translateY(8px) scale(0.995) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+            transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.7s ease !important;
         }
 
         :global(.hero-form-anim.revealed) {
+            opacity: 1 !important;
             transform: translateY(0) scale(1) !important;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
         }
 
-        /* Плавные последовательные шаги без зависаний */
         :global(.hero-features-anim.reveal-init) .feature-item {
             transform: translateY(10px) !important;
             transition: opacity 0.45s ease-out,
             transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
 
-        :global(.hero-features-anim.revealed) .feature-item:nth-child(1) { transition-delay: 0.06s !important; }
-        :global(.hero-features-anim.revealed) .feature-item:nth-child(2) { transition-delay: 0.12s !important; }
-        :global(.hero-features-anim.revealed) .feature-item:nth-child(3) { transition-delay: 0.18s !important; }
-        :global(.hero-features-anim.revealed) .feature-item:nth-child(4) { transition-delay: 0.24s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(1) { transition-delay: 0.05s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(2) { transition-delay: 0.10s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(3) { transition-delay: 0.15s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(4) { transition-delay: 0.20s !important; }
     }
 </style>
