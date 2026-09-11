@@ -80,7 +80,7 @@
         <!-- Заголовок появляется плавно сверху -->
         <div
                 class="header-block works-header-anim"
-                use:reveal={{ offset: '-40px', delay: 100 }}
+                use:reveal={{ offset: '-30px', delay: 50 }}
         >
             <h2 class="title">Наши работы</h2>
             <p class="subtitle">
@@ -94,7 +94,7 @@
                 <article
                         class="work-card work-card-anim"
                         class:reverse={item.reverse}
-                        use:reveal={{ offset: '-80px', delay: 120 }}
+                        use:reveal={{ offset: '-30px', delay: 60 }}
                 >
                     <!-- Слайдер фотографий -->
                     <div class="image-wrapper">
@@ -433,7 +433,7 @@
         filter: blur(0);
     }
 
-    /* Карточка целиком: подъем и нарастание тени (контент всегда остается видимым внутри карточки) */
+    /* Карточка целиком: подъем и нарастание тени */
     :global(.work-card-anim.reveal-init) {
         opacity: 0;
         transform: translateY(28px);
@@ -496,11 +496,10 @@
             transition-duration: 0.35s !important;
         }
 
-        /* 2. Карточка: мягкий короткий подъем (12px вместо 28px) за 0.35s */
+        /* 2. Карточка: мягкий короткий подъем (12px вместо 28px) за 0.38s */
         :global(.work-card-anim.reveal-init) {
             transform: translateY(12px) !important;
             transition-duration: 0.38s !important;
-            /* Упрощаем расчет теней для плавного скролла */
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
         }
 
