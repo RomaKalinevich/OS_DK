@@ -17,42 +17,34 @@
 	<Header />
 
 	<main class="content">
-		<!-- Hero без задержки, чтобы первый экран отдавался мгновенно -->
 		<section id="hero">
 			<Hero />
 		</section>
 
-		<!-- Преимущества: матовое проявление с легким подъемом -->
 		<section id="benefits" class="anim-blur-up" use:reveal>
 			<Benefits />
 		</section>
 
-		<!-- Работы: премиальное раскрытие шторкой (clip-path) -->
 		<section id="works" class="anim-curtain">
 			<Works />
 		</section>
 
-		<!-- Акции: кинематографичное мягкое приближение с глубиной -->
 		<section id="promotions" class="anim-zoom-in" use:reveal>
 			<PromoDrawer />
 		</section>
 
-		<!-- О компании: бархатный расфокус -->
 		<section id="about" class="anim-blur-up" use:reveal>
 			<About />
 		</section>
 
-		<!-- Каталог: акцент на пропорциях сетки через легкий зум -->
 		<section id="catalog" class="anim-zoom-in" use:reveal>
 			<CatalogSlider />
 		</section>
 
-		<!-- Форма: энергичный объемный вход, акцентирующий конверсионный блок -->
 		<section id="order" class="anim-elevate" use:reveal>
 			<StepsForm />
 		</section>
 
-		<!-- Отзывы: мягкий подъем -->
 		<section id="reviews" class="anim-lift" use:reveal>
 			<Reviews />
 		</section>
@@ -78,8 +70,13 @@
 		contain: paint;
 	}
 
+	/* Отступ при переходе по якорным ссылкам, чтобы заголовок не наезжал на шапку */
+	section[id] {
+		scroll-margin-top: 110px;
+	}
+
 	/* -------------------------------------------------------------
-       1. Матовый расфокус (anim-blur-up) — для текста и преимуществ
+       1. Матовый расфокус (anim-blur-up)
     ------------------------------------------------------------- */
 	:global(.reveal-init.anim-blur-up) {
 		opacity: 0;
@@ -97,7 +94,7 @@
 	}
 
 	/* -------------------------------------------------------------
-       2. Раскрытие шторкой (anim-curtain) — идеальный журнальный стиль
+       2. Раскрытие шторкой (anim-curtain)
     ------------------------------------------------------------- */
 	:global(.reveal-init.anim-curtain) {
 		opacity: 0;
@@ -115,7 +112,7 @@
 	}
 
 	/* -------------------------------------------------------------
-       3. Элегантное масштабирование (anim-zoom-in) — для каталога и промо
+       3. Элегантное масштабирование (anim-zoom-in)
     ------------------------------------------------------------- */
 	:global(.reveal-init.anim-zoom-in) {
 		opacity: 0;
@@ -130,7 +127,7 @@
 	}
 
 	/* -------------------------------------------------------------
-       4. Объемный вход (anim-elevate) — для формы заказа
+       4. Объемный вход (anim-elevate)
     ------------------------------------------------------------- */
 	:global(.reveal-init.anim-elevate) {
 		opacity: 0;
@@ -169,5 +166,51 @@
 	}
 	:global(.reveal-init.anim-fade.revealed) {
 		opacity: 1;
+	}
+
+	/* =============================================================
+       Адаптация для мобильных устройств (экраны <= 992px)
+    ============================================================= */
+	@media (max-width: 992px) {
+		.content {
+			/* Убираем 100px: Hero начинается сразу под статичным блоком контактов */
+			padding-top: 0;
+		}
+
+		/* Высота мобильной шапки 52px, выставляем якорный скролл ровно под неё */
+		section[id] {
+			scroll-margin-top: 60px;
+		}
+
+		/* Снижаем амплитуду сдвигов и размытия для плавной работы на мобильных GPU */
+		:global(.reveal-init.anim-blur-up) {
+			filter: blur(4px);
+			transform: translateY(10px);
+		}
+
+		:global(.reveal-init.anim-curtain) {
+			transform: translateY(8px);
+		}
+
+		:global(.reveal-init.anim-zoom-in) {
+			transform: scale(0.98) translateY(8px);
+		}
+
+		:global(.reveal-init.anim-elevate) {
+			transform: translateY(12px);
+		}
+
+		:global(.reveal-init.anim-lift) {
+			transform: translateY(10px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.reveal-init) {
+			transition: none !important;
+			transform: none !important;
+			filter: none !important;
+			opacity: 1 !important;
+		}
 	}
 </style>
