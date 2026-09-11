@@ -1,8 +1,8 @@
 <script>
     export let reviews = [
-        '/images/reviews/review-1.png',
-        '/images/reviews/review-2.png',
-        '/images/reviews/review-3.png'
+        '/images/reviews/review-1.jpg',
+        '/images/reviews/review-2.jpg',
+        '/images/reviews/review-З.jpg'
     ];
 
     export let sideImage = '/images/reviews/review-bg.png';

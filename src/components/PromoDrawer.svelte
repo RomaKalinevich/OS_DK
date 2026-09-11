@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { reveal } from '../actions/reveal.js';
 
     let days = $state('00');
     let hours = $state('00');
@@ -54,7 +55,11 @@
 
     <div class="container">
         <div class="banner-content">
-            <div class="banner-left">
+            <!-- Левая колонка: плавный вход слева с блюром -->
+            <div
+                    class="banner-left promo-text-anim"
+                    use:reveal={{ offset: '-80px', delay: 100 }}
+            >
                 <h2 class="title">
                     Дарим<br />
                     выдвижной ящик!
@@ -65,8 +70,13 @@
                 </p>
             </div>
 
+            <!-- Правая колонка с карточкой таймера и кнопкой -->
             <div class="banner-right">
-                <div class="timer-card">
+                <!-- Карточка таймера с каскадными цифрами -->
+                <div
+                        class="timer-card promo-timer-anim"
+                        use:reveal={{ offset: '-80px', delay: 200 }}
+                >
                     <p class="timer-header">До конца акции осталось</p>
 
                     <div class="timer-display">
@@ -89,7 +99,11 @@
                     </div>
                 </div>
 
-                <div class="action-block">
+                <!-- Блок действия с задержкой 350мс -->
+                <div
+                        class="action-block promo-action-anim"
+                        use:reveal={{ offset: '-80px', delay: 350 }}
+                >
                     <p class="action-note">Поторопитесь! Срок акции ограничен</p>
                     <a href="#order" class="btn-order">Заказать сейчас</a>
                 </div>
@@ -107,10 +121,12 @@
         color: #ffffff;
         padding: 70px 40px;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
     .banner-overlay {
         position: absolute;
+        inset: 0;
         background: rgba(24, 24, 24, 0.72);
     }
 
@@ -195,6 +211,7 @@
         color: #f14343;
         font-variant-numeric: tabular-nums;
         margin-bottom: 8px;
+        border-radius: 4px;
     }
 
     .timer-label {
@@ -240,6 +257,78 @@
         transform: translateY(1px);
     }
 
+    /* -------------------------------------------------------------
+       Индивидуальные кинематические анимации
+    ------------------------------------------------------------- */
+
+    /* 1. Левый текст: мягкое появление сбоку с расфокусом */
+    :global(.promo-text-anim.reveal-init) {
+        opacity: 0;
+        transform: translateX(-30px);
+        filter: blur(6px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.8s ease-out;
+        will-change: opacity, transform, filter;
+    }
+
+    :global(.promo-text-anim.revealed) {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+    }
+
+    /* 2. Карточка таймера: уверенный подъем снизу с увеличением глубины тени */
+    :global(.promo-timer-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.75s ease-out;
+        will-change: opacity, transform;
+    }
+
+    :global(.promo-timer-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Каскадное проявление колонок со счетчиком внутри карточки */
+    :global(.promo-timer-anim.reveal-init) .timer-col {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    :global(.promo-timer-anim.revealed) .timer-col:nth-child(1) {
+        opacity: 1; transform: translateY(0); transition-delay: 0.1s;
+    }
+    :global(.promo-timer-anim.revealed) .timer-col:nth-child(2) {
+        opacity: 1; transform: translateY(0); transition-delay: 0.18s;
+    }
+    :global(.promo-timer-anim.revealed) .timer-col:nth-child(3) {
+        opacity: 1; transform: translateY(0); transition-delay: 0.26s;
+    }
+    :global(.promo-timer-anim.revealed) .timer-col:nth-child(4) {
+        opacity: 1; transform: translateY(0); transition-delay: 0.34s;
+    }
+
+    /* 3. Кнопка заказа и подпись */
+    :global(.promo-action-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    :global(.promo-action-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     @media (max-width: 992px) {
         .banner-content {
             flex-direction: column;
@@ -250,6 +339,10 @@
             font-size: 34px;
             padding-left: 0;
             border-left: none;
+        }
+
+        :global(.promo-text-anim.reveal-init) {
+            transform: translateY(20px);
         }
 
         .banner-right,

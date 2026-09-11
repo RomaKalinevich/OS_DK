@@ -28,7 +28,7 @@
 		</section>
 
 		<!-- Работы: премиальное раскрытие шторкой (clip-path) -->
-		<section id="works" class="anim-curtain" use:reveal>
+		<section id="works" class="anim-curtain">
 			<Works />
 		</section>
 
@@ -57,8 +57,7 @@
 			<Reviews />
 		</section>
 
-		<!-- Футер: деликатное появление -->
-		<section id="contact" class="anim-fade" use:reveal>
+		<section id="contact" class="anim-fade">
 			<Footer />
 		</section>
 	</main>

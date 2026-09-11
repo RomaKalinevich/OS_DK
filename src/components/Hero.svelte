@@ -1,4 +1,6 @@
 <script>
+    import {reveal} from '../actions/reveal.js';
+
     let name = $state('');
     let phone = $state('');
     let agreed = $state(false);
@@ -53,9 +55,12 @@
         <div class="hero-content">
             <div class="hero-left">
                 <span class="subtitle">Заполните заявку чтобы получить скидку 10%</span>
-                <h1 class="title">Мебель любой <br />сложности на заказ</h1>
+                <h1 class="title">Мебель любой <br/>сложности на заказ</h1>
 
-                <div class="features-grid">
+                <div
+                        class="features-grid hero-features-anim"
+                        use:reveal={{ offset: '0px', delay: 150 }}
+                >
                     <div class="feature-item">
                         <img class="feature-icon" src="/images/fill-application.png" alt="Шаг 1"/>
                         <p>Заполните заявку на сайте или позвоните нам</p>
@@ -79,12 +84,17 @@
             </div>
 
             <div class="hero-right">
-                <form class="lead-card" onsubmit={handleSubmit}>
+                <form
+                        class="lead-card hero-form-anim"
+                        onsubmit={handleSubmit}
+                        use:reveal={{ offset: '0px', delay: 350 }}
+                >
                     {#if isSuccess}
                         <div class="success-box">
                             <div class="success-icon">✓</div>
                             <h3>Заявка принята!</h3>
-                            <p class="success-text">Скидка 10% зафиксирована за вашим номером. Мы перезвоним вам в ближайшее время!</p>
+                            <p class="success-text">Скидка 10% зафиксирована за вашим номером. Мы перезвоним вам в
+                                ближайшее время!</p>
                             <button type="button" class="submit-btn" onclick={() => (isSuccess = false)}>
                                 Отправить еще
                             </button>
@@ -375,6 +385,57 @@
         font-size: 13px;
         margin-bottom: 16px;
         text-align: center;
+    }
+
+    /* Индивидуальная анимация формы в Hero: плавный въезд справа с масштабом */
+    :global(.hero-form-anim.reveal-init) {
+        opacity: 0;
+        transform: translateX(32px) scale(0.96);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.75s ease-out;
+        will-change: opacity, transform;
+    }
+
+    :global(.hero-form-anim.revealed) {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Базовое скрытое состояние карточек шагов до триггера */
+    :global(.hero-features-anim.reveal-init) .feature-item {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.65s ease-out,
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    /* Каскадное появление по очереди при срабатывании */
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(1) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.05s;
+    }
+
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(2) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.15s;
+    }
+
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(3) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.25s;
+    }
+
+    :global(.hero-features-anim.revealed) .feature-item:nth-child(4) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.35s;
     }
 
     @media (max-width: 992px) {

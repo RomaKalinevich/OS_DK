@@ -1,4 +1,6 @@
 <script>
+    import { reveal } from '../actions/reveal.js';
+
     const wardrobesModules = import.meta.glob(
         '/assets/works/wardrobes/*.{jpg,jpeg,png,webp}',
         { eager: true, import: 'default' }
@@ -58,7 +60,6 @@
         }
     ];
 
-    // Индексы активного слайда для каждой из 3 карточек
     let activeSlides = $state(works.map(() => 0));
 
     function prevSlide(cardIndex, total) {
@@ -76,7 +77,11 @@
 
 <section id="gallery" class="works-section">
     <div class="container">
-        <div class="header-block">
+        <!-- Заголовок появляется плавно сверху -->
+        <div
+                class="header-block works-header-anim"
+                use:reveal={{ offset: '-40px', delay: 100 }}
+        >
             <h2 class="title">Наши работы</h2>
             <p class="subtitle">
                 Мы готовы выполнить работы по созданию, проектированию и подбору материалов для мебели<br />
@@ -86,7 +91,11 @@
 
         <div class="cards-list">
             {#each works as item, cardIndex}
-                <article class="work-card" class:reverse={item.reverse}>
+                <article
+                        class="work-card work-card-anim"
+                        class:reverse={item.reverse}
+                        use:reveal={{ offset: '-80px', delay: 120 }}
+                >
                     <!-- Слайдер фотографий -->
                     <div class="image-wrapper">
                         <div class="slider-container">
@@ -164,6 +173,7 @@
         padding: 90px 40px;
         background-image: url('/images/works-bg.png');
         background-repeat: repeat;
+        overflow: hidden;
     }
 
     .container {
@@ -211,11 +221,14 @@
         flex-direction: row-reverse;
     }
 
-    /* Обертка слайдера */
+    /* Строго держит половину карточки и не распирается картинками */
     .image-wrapper {
-        flex: 1 1 50%;
+        flex: 0 0 50%;
+        width: 50%;
+        min-width: 0;
         min-height: 480px;
         position: relative;
+        overflow: hidden;
     }
 
     .slider-container {
@@ -225,27 +238,36 @@
         min-height: 480px;
         overflow: hidden;
         background-color: #f5f5f5;
+        contain: paint;
     }
 
-    /* Плавная смена слайдов */
+    /* Все изображения строго зажаты в границах и не могут выстраиваться в ряд */
     .slide-img {
         position: absolute;
         top: 0;
         left: 0;
+        right: 0;
+        bottom: 0;
         width: 100%;
         height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: cover;
         opacity: 0;
-        transition: opacity 0.35s ease-in-out;
+        visibility: hidden;
+        transition: opacity 0.35s ease-in-out, visibility 0.35s ease-in-out;
         pointer-events: none;
+        z-index: 1;
     }
 
     .slide-img.active {
         opacity: 1;
+        visibility: visible;
         pointer-events: auto;
+        z-index: 2;
     }
 
-    /* Кнопки переключения внутри слайдера */
+    /* Кнопки зафиксированы с повышенным z-index и сбросом противоположного края */
     .slider-btn {
         position: absolute;
         top: 50%;
@@ -259,8 +281,8 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        z-index: 2;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
         transition: background-color 0.2s, transform 0.1s;
     }
 
@@ -274,13 +296,14 @@
 
     .slider-btn.prev {
         left: 16px;
+        right: auto;
     }
 
     .slider-btn.next {
         right: 16px;
+        left: auto;
     }
 
-    /* Индикаторы страниц */
     .slider-dots {
         position: absolute;
         bottom: 14px;
@@ -288,8 +311,8 @@
         transform: translateX(-50%);
         display: flex;
         gap: 6px;
-        z-index: 2;
-        background: rgba(0, 0, 0, 0.3);
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.35);
         padding: 4px 8px;
         border-radius: 12px;
     }
@@ -310,9 +333,10 @@
         transform: scale(1.3);
     }
 
-    /* Контент карточки */
     .content-wrapper {
-        flex: 1 1 50%;
+        flex: 0 0 50%;
+        width: 50%;
+        min-width: 0;
         gap: 15px;
         padding: 40px 32px;
         display: flex;
@@ -388,10 +412,65 @@
         background-color: #e0a300;
     }
 
+    /* -------------------------------------------------------------
+       Анимации карточек и заголовка
+    ------------------------------------------------------------- */
+
+    /* Заголовок: деликатный блюр и опускание */
+    :global(.works-header-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(5px);
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.75s ease;
+        will-change: opacity, transform, filter;
+    }
+
+    :global(.works-header-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+
+    /* Карточка целиком: подъем и нарастание тени (контент всегда остается видимым внутри карточки) */
+    :global(.work-card-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(28px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.75s ease;
+        will-change: opacity, transform;
+    }
+
+    :global(.work-card-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Каскадное появление пунктов списка */
+    :global(.work-card-anim.revealed) .points-list li:nth-child(1) { animation: fadePoint 0.4s ease backwards 0.15s; }
+    :global(.work-card-anim.revealed) .points-list li:nth-child(2) { animation: fadePoint 0.4s ease backwards 0.25s; }
+    :global(.work-card-anim.revealed) .points-list li:nth-child(3) { animation: fadePoint 0.4s ease backwards 0.35s; }
+    :global(.work-card-anim.revealed) .points-list li:nth-child(4) { animation: fadePoint 0.4s ease backwards 0.45s; }
+
+    @keyframes fadePoint {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 992px) {
         .work-card,
         .work-card.reverse {
             flex-direction: column;
+        }
+
+        .image-wrapper,
+        .content-wrapper {
+            flex: 1 1 100%;
+            width: 100%;
         }
 
         .image-wrapper,

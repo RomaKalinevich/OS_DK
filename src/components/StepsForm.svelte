@@ -1,4 +1,6 @@
 <script>
+    import { reveal } from '../actions/reveal.js';
+
     let name = '';
     let phone = '';
     let email = '';
@@ -85,7 +87,10 @@
 
             <!-- Правая колонка: форма -->
             <div class="steps-right">
-                <form class="lead-card" on:submit={handleSubmit}>
+                <form
+                        class="lead-card steps-form-anim"
+                        on:submit={handleSubmit}
+                        use:reveal={{ offset: '-80px', delay: 200 }}>
                     {#if isSuccess}
                         <div class="success-box">
                             <div class="success-icon">✓</div>
@@ -160,6 +165,23 @@
 </section>
 
 <style>
+
+    :global(.steps-form-anim.reveal-init) {
+        opacity: 0;
+        transform: translateY(35px);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
+        box-shadow 0.7s ease-out;
+        will-change: opacity, transform;
+    }
+
+    :global(.steps-form-anim.revealed) {
+        opacity: 1;
+        transform: translateY(0);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
     .steps-section {
         position: relative;
         background-size: cover;
