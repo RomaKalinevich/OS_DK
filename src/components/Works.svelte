@@ -461,6 +461,9 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
+    /* -------------------------------------------------------------
+        Адаптация анимаций под мобильные устройства (<= 992px)
+     ------------------------------------------------------------- */
     @media (max-width: 992px) {
         .work-card,
         .work-card.reverse {
@@ -479,7 +482,29 @@
         }
 
         .content-wrapper {
-            padding: 36px 24px;
+            padding: 28px 18px;
+        }
+
+        /* 1. Заголовок: убираем blur, уменьшаем сдвиг и ускоряем */
+        :global(.works-header-anim.reveal-init) {
+            filter: none !important;
+            transform: translateY(10px) !important;
+            transition-duration: 0.35s !important;
+        }
+
+        /* 2. Карточка: мягкий короткий подъем (12px вместо 28px) за 0.35s */
+        :global(.work-card-anim.reveal-init) {
+            transform: translateY(12px) !important;
+            transition-duration: 0.38s !important;
+            /* Упрощаем расчет теней для плавного скролла */
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+        }
+
+        /* 3. Отключаем задержки пунктов списка: текст появляется сразу вместе с карточкой */
+        :global(.work-card-anim.revealed) .points-list li {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
         }
     }
 </style>
