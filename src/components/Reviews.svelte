@@ -52,7 +52,7 @@
         <!-- Заголовок блока с анимацией -->
         <div
                 class="header-block reviews-header-anim"
-                use:reveal={{ offset: '-40px', delay: 100 }}
+                use:reveal={{ offset: '-40px', delay: 60 }}
         >
             <h2 class="title">Нас рекомендуют</h2>
             <p class="subtitle">что говорят наши клиенты</p>
@@ -71,7 +71,10 @@
         </div>
 
         <!-- Мобильный вид (строго по макету 390px): 1 карточка + стрелки снизу слева -->
-        <div class="mobile-reviews-block">
+        <div
+                class="mobile-reviews-block mobile-reviews-anim"
+                use:reveal={{ offset: '-40px', delay: 100 }}
+        >
             <div class="mobile-slider">
                 {#each reviews as img, i}
                     <div
@@ -196,7 +199,7 @@
         display: none;
     }
 
-    /* ---------------- Анимации блока отзывов ---------------- */
+    /* ---------------- Анимации блока отзывов (Десктоп) ---------------- */
     :global(.reviews-header-anim.reveal-init) {
         opacity: 0;
         transform: translateY(20px);
@@ -282,11 +285,34 @@
             font-size: 14px;
         }
 
+        /* Мягкий мобильный вход заголовка без размытия */
+        :global(.reviews-header-anim.reveal-init) {
+            filter: none !important;
+            transform: translateY(10px) !important;
+            transition: opacity 0.5s ease-out,
+            transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+
         .mobile-reviews-block {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             width: 100%;
+        }
+
+        /* Плавное проявление всего блока слайдера */
+        :global(.mobile-reviews-anim.reveal-init) {
+            opacity: 0 !important;
+            transform: translateY(8px) !important;
+            transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1),
+            transform 0.95s cubic-bezier(0.12, 0.98, 0.24, 1) !important;
+            will-change: opacity, transform;
+        }
+
+        :global(.mobile-reviews-anim.revealed) {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            transition-delay: 0.1s !important;
         }
 
         /* 1 карточка по центру */
@@ -298,17 +324,23 @@
             margin: 0 auto;
         }
 
+        /* Шелковистый кросс-фейд карточек со сглаживанием */
         .mobile-review-card {
             position: absolute;
             inset: 0;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+            transform: scale(0.985);
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0.45s ease-in-out;
+            will-change: opacity, transform;
         }
 
         .mobile-review-card.active {
             opacity: 1;
             visibility: visible;
+            transform: scale(1);
         }
 
         .mobile-review-card img {
@@ -318,7 +350,7 @@
             display: block;
         }
 
-        /* Желтые стрелки внизу слева строго по макету */
+        /* Желтые стрелки внизу слева */
         .mobile-arrows {
             display: flex;
             align-items: center;
@@ -338,7 +370,7 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(255, 199, 0, 0.35);
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.15s ease;
         }
 
         .arrow-btn:active {
