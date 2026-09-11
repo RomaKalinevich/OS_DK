@@ -55,10 +55,10 @@
 
     <div class="container">
         <div class="banner-content">
-            <!-- Левая колонка: плавный вход слева с блюром -->
+            <!-- Левая колонка: плавный вход -->
             <div
                     class="banner-left promo-text-anim"
-                    use:reveal={{ offset: '-80px', delay: 100 }}
+                    use:reveal={{ offset: '-40px', delay: 50 }}
             >
                 <h2 class="title">
                     Дарим<br />
@@ -72,10 +72,10 @@
 
             <!-- Правая колонка с карточкой таймера и кнопкой -->
             <div class="banner-right">
-                <!-- Карточка таймера с каскадными цифрами -->
+                <!-- Карточка таймера -->
                 <div
                         class="timer-card promo-timer-anim"
-                        use:reveal={{ offset: '-80px', delay: 200 }}
+                        use:reveal={{ offset: '-40px', delay: 100 }}
                 >
                     <p class="timer-header">До конца акции осталось</p>
 
@@ -99,10 +99,10 @@
                     </div>
                 </div>
 
-                <!-- Блок действия с задержкой 350мс -->
+                <!-- Блок действия -->
                 <div
                         class="action-block promo-action-anim"
-                        use:reveal={{ offset: '-80px', delay: 350 }}
+                        use:reveal={{ offset: '-40px', delay: 150 }}
                 >
                     <p class="action-note">Поторопитесь! Срок акции ограничен</p>
                     <a href="#order" class="btn-order">Заказать сейчас</a>
@@ -258,10 +258,8 @@
     }
 
     /* -------------------------------------------------------------
-       Индивидуальные кинематические анимации
+       Индивидуальные анимации (Десктоп)
     ------------------------------------------------------------- */
-
-    /* 1. Левый текст: мягкое появление сбоку с расфокусом */
     :global(.promo-text-anim.reveal-init) {
         opacity: 0;
         transform: translateX(-30px);
@@ -278,7 +276,6 @@
         filter: blur(0);
     }
 
-    /* 2. Карточка таймера: уверенный подъем снизу с увеличением глубины тени */
     :global(.promo-timer-anim.reveal-init) {
         opacity: 0;
         transform: translateY(28px) scale(0.97);
@@ -295,7 +292,6 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
-    /* Каскадное проявление колонок со счетчиком внутри карточки */
     :global(.promo-timer-anim.reveal-init) .timer-col {
         opacity: 0;
         transform: translateY(10px);
@@ -315,7 +311,6 @@
         opacity: 1; transform: translateY(0); transition-delay: 0.34s;
     }
 
-    /* 3. Кнопка заказа и подпись */
     :global(.promo-action-anim.reveal-init) {
         opacity: 0;
         transform: translateY(16px);
@@ -329,20 +324,30 @@
         transform: translateY(0);
     }
 
+    /* -------------------------------------------------------------
+       Шелковистая адаптация для мобильных устройств (<= 992px)
+    ------------------------------------------------------------- */
     @media (max-width: 992px) {
+        .promo-banner {
+            padding: 50px 20px;
+        }
+
         .banner-content {
             flex-direction: column;
             text-align: center;
+            gap: 32px;
         }
 
         .title {
-            font-size: 34px;
+            font-size: 32px;
             padding-left: 0;
             border-left: none;
+            margin-bottom: 16px;
         }
 
-        :global(.promo-text-anim.reveal-init) {
-            transform: translateY(20px);
+        .desc {
+            font-size: 16px;
+            line-height: 24px;
         }
 
         .banner-right,
@@ -350,6 +355,55 @@
         .btn-order {
             width: 100%;
             max-width: 360px;
+        }
+
+        /* 1. Заголовок: ультра-плавный подъем без расфокуса */
+        :global(.promo-text-anim.reveal-init) {
+            filter: none !important;
+            transform: translateY(8px) !important;
+            transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1),
+            transform 0.95s cubic-bezier(0.12, 0.98, 0.24, 1) !important;
+        }
+
+        :global(.promo-text-anim.revealed) {
+            transform: translateY(0) !important;
+        }
+
+        /* 2. Карточка таймера: мягкий набор плотности и глубины тени */
+        :global(.promo-timer-anim.reveal-init) {
+            opacity: 0 !important;
+            transform: translateY(8px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: opacity 0.95s cubic-bezier(0.25, 0.1, 0.25, 1),
+            transform 1.05s cubic-bezier(0.12, 0.98, 0.24, 1),
+            box-shadow 1.05s ease !important;
+            will-change: opacity, transform, box-shadow;
+        }
+
+        :global(.promo-timer-anim.revealed) {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+            transition-delay: 0.1s !important;
+        }
+
+        /* Отключаем скачки цифр внутри таймера на тач-экранах */
+        :global(.promo-timer-anim.reveal-init) .timer-col {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        /* 3. Кнопка заказа */
+        :global(.promo-action-anim.reveal-init) {
+            transform: translateY(8px) !important;
+            transition: opacity 0.75s cubic-bezier(0.25, 0.1, 0.25, 1),
+            transform 0.85s cubic-bezier(0.12, 0.98, 0.24, 1) !important;
+        }
+
+        :global(.promo-action-anim.revealed) {
+            transform: translateY(0) !important;
+            transition-delay: 0.18s !important;
         }
     }
 </style>
