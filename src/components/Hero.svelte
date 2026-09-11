@@ -214,9 +214,16 @@
                                     disabled={isSubmitting}
                                     required
                             />
-                            <label for="agree">
+                            <label for="step-agree">
                                 <span>*</span> Я согласен на обработку моих
-                                <a href="#privacy">персональных данных</a>
+                                <a
+                                        href="/privacy-policy.docx"
+                                        download="Политика_конфиденциальности.docx"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                >
+                                    персональных данных
+                                </a>
                             </label>
                         </div>
 

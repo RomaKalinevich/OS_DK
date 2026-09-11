@@ -15,8 +15,8 @@
     const steps = [
         'Впишите имя и номер телефона в форму',
         'Мы связываемся с вами, чтобы обсудить условия',
-        'Специалист выезжает к вам и замеряет все данные, рисует эскиз и составляет смету',
-        'Вы подписываете договор - мы реализуем вашу мебель!'
+        'Специалист замеряет все данные и составляет смету',
+        'Вы подписываете договор - мы реализуем вашу мебель'
     ];
 
     // Форматирование телефона строго по маске +375 (XX) XXX-XX-XX
@@ -31,9 +31,7 @@
             digits = '375' + digits;
         }
 
-        // 375 + ровно 9 цифр номера (суммарно 12 цифр)
         digits = digits.slice(0, 12);
-
         const local = digits.slice(3);
         let res = '+375';
 
@@ -144,8 +142,8 @@
                     {#each steps as text}
                         <div class="step-item">
                             <div class="step-badge">
-                                <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-                                    <path d="M1.5 7L6.5 12L16.5 2" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg width="15" height="12" viewBox="0 0 18 14" fill="none">
+                                    <path d="M1.5 7L6.5 12L16.5 2" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
                             <p class="step-text">{text}</p>
@@ -159,7 +157,8 @@
                 <form
                         class="lead-card steps-form-anim"
                         on:submit={handleSubmit}
-                        use:reveal={{ offset: '-80px', delay: 200 }}>
+                        use:reveal={{ offset: '-80px', delay: 200 }}
+                >
                     {#if isSuccess}
                         <div class="success-box">
                             <div class="success-icon">✓</div>
@@ -181,7 +180,6 @@
                             <input
                                     id="step-name"
                                     type="text"
-                                    placeholder="Ваше имя"
                                     bind:value={name}
                                     disabled={isSubmitting}
                                     required
@@ -210,7 +208,6 @@
                             <input
                                     id="step-email"
                                     type="email"
-                                    placeholder="example@mail.ru"
                                     bind:value={email}
                                     disabled={isSubmitting}
                             />
@@ -226,12 +223,19 @@
                             />
                             <label for="step-agree">
                                 <span>*</span> Я согласен на обработку моих
-                                <a href="#privacy">персональных данных</a>
+                                <a
+                                        href="/privacy-policy.docx"
+                                        download="Политика_конфиденциальности.docx"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                >
+                                    персональных данных
+                                </a>
                             </label>
                         </div>
 
                         <button type="submit" class="submit-btn" disabled={isSubmitting}>
-                            {isSubmitting ? 'Отправка...' : 'Оставить заявку'}
+                            {isSubmitting ? 'Отправка...' : 'Оставить'}
                         </button>
                     {/if}
                 </form>
@@ -243,7 +247,7 @@
 <style>
     :global(.steps-form-anim.reveal-init) {
         opacity: 0;
-        transform: translateY(35px);
+        transform: translateY(30px);
         box-shadow: 0 0 0 rgba(0, 0, 0, 0);
         transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1),
         transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
@@ -259,10 +263,9 @@
 
     .steps-section {
         position: relative;
-        background-size: cover;
-        background-position: center;
         padding: 80px 20px;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
     .steps-overlay {
@@ -270,6 +273,9 @@
         inset: 0;
         background-image: url('/images/steps-bg.png');
         background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.95;
     }
 
     .container {
@@ -339,12 +345,12 @@
         border-radius: 4px;
         padding: 38px 32px 42px;
         width: 100%;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         box-sizing: border-box;
     }
 
     .card-title {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 700;
         text-align: center;
         margin: 0 0 24px 0;
@@ -369,10 +375,10 @@
     }
 
     .form-group input {
-        height: 42px;
+        height: 44px;
         padding: 0 12px;
-        border: 1px solid #d0d0d0;
-        border-radius: 3px;
+        border: 1px solid #dcdcdc;
+        border-radius: 4px;
         font-family: inherit;
         font-size: 14px;
         outline: none;
@@ -422,9 +428,8 @@
         border: none;
         border-radius: 4px;
         font-family: inherit;
-        font-size: 18px;
-        line-height: 20px;
-        font-weight: 500;
+        font-size: 17px;
+        font-weight: 600;
         cursor: pointer;
         transition: background-color 0.2s, transform 0.1s;
     }
@@ -479,15 +484,71 @@
         line-height: 1.4;
     }
 
+    /* ---------------- Адаптация под 390px (по макету) ---------------- */
     @media (max-width: 992px) {
+        .steps-section {
+            padding: 44px 16px 54px;
+        }
+
         .steps-content {
             flex-direction: column;
             align-items: center;
+            gap: 36px;
+        }
+
+        .steps-left {
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 26px;
+            margin-bottom: 28px;
+            line-height: 1.25;
+        }
+
+        .steps-list {
+            gap: 20px;
+            max-width: 100%;
+        }
+
+        .step-item {
+            gap: 14px;
+        }
+
+        .step-badge {
+            width: 36px;
+            height: 36px;
+        }
+
+        .step-text {
+            font-size: 13.5px;
+            line-height: 1.35;
+            color: #444444;
         }
 
         .steps-right {
             width: 100%;
-            max-width: 400px;
+            max-width: 100%;
+        }
+
+        .lead-card {
+            padding: 28px 18px 32px;
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            height: 42px;
+        }
+
+        .submit-btn {
+            height: 46px;
+            font-size: 16px;
         }
     }
 </style>
