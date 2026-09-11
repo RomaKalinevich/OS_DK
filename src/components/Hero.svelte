@@ -159,7 +159,7 @@
                 <form
                         class="lead-card hero-form-anim"
                         onsubmit={handleSubmit}
-                        use:reveal={{ offset: '0px', delay: 180 }}
+                        use:reveal={{ offset: '0px', delay: 150 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
@@ -570,25 +570,27 @@
             margin-bottom: 20px;
         }
 
-        /* Начальное состояние формы на мобилке */
+        /* Максимально мягкое скрытое состояние формы */
         :global(.hero-form-anim.reveal-init) {
             opacity: 0 !important;
-            transform: translateY(14px) scale(0.99) !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-            transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-            box-shadow 0.65s ease !important;
-            will-change: opacity, transform;
+            transform: translateY(6px) !important;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+            transition:
+                    opacity 0.95s cubic-bezier(0.25, 0.1, 0.25, 1),
+                    transform 1.05s cubic-bezier(0.12, 0.98, 0.24, 1),
+                    box-shadow 1.1s ease !important;
+            will-change: opacity, transform, box-shadow;
         }
 
-        /* Плавный шелковистый вход с гарантированной задержкой */
+        /* Шелковистый набор плотности и глубины с задержкой */
         :global(.hero-form-anim.revealed) {
             opacity: 1 !important;
-            transform: translateY(0) scale(1) !important;
+            transform: translateY(0) !important;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22) !important;
-            transition-delay: 0.2s !important;
+            transition-delay: 0.15s !important;
         }
 
+        /* Шаги преимуществ */
         :global(.hero-features-anim.reveal-init) .feature-item {
             transform: translateY(10px) !important;
             transition: opacity 0.45s ease-out,
