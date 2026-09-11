@@ -181,7 +181,7 @@
         .review-card {
             flex: 0 0 290px;
             width: 290px;
-            height: 520px;
+            height: 550px;
         }
 
         .side-photo {

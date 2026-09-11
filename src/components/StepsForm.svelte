@@ -19,22 +19,91 @@
         'Вы подписываете договор - мы реализуем вашу мебель!'
     ];
 
+    // Форматирование телефона строго по маске +375 (XX) XXX-XX-XX
+    function formatPhone(val) {
+        let digits = val.replace(/\D/g, '');
+
+        if (digits.startsWith('80')) {
+            digits = '375' + digits.slice(2);
+        } else if (digits.startsWith('7')) {
+            digits = '375' + digits.slice(1);
+        } else if (!digits.startsWith('375')) {
+            digits = '375' + digits;
+        }
+
+        // 375 + ровно 9 цифр номера (суммарно 12 цифр)
+        digits = digits.slice(0, 12);
+
+        const local = digits.slice(3);
+        let res = '+375';
+
+        if (local.length > 0) {
+            res += ' (' + local.slice(0, 2);
+        }
+        if (local.length >= 2) {
+            res += ') ' + local.slice(2, 5);
+        }
+        if (local.length >= 5) {
+            res += '-' + local.slice(5, 7);
+        }
+        if (local.length >= 7) {
+            res += '-' + local.slice(7, 9);
+        }
+
+        return res;
+    }
+
+    function handlePhoneInput(event) {
+        const input = event.target;
+        const formatted = formatPhone(input.value);
+        phone = formatted;
+        input.value = formatted;
+        if (errorMessage) errorMessage = '';
+    }
+
+    function handlePhoneFocus(event) {
+        if (!phone) {
+            phone = '+375 (';
+            event.target.value = phone;
+        }
+    }
+
+    function handlePhoneBlur() {
+        if (phone === '+375 (' || phone === '+375') {
+            phone = '';
+        }
+    }
+
+    function handlePhoneKeyDown(event) {
+        if (event.key === 'Backspace') {
+            const val = event.target.value;
+            if (val.endsWith('-') || val.endsWith(') ') || val.endsWith('(')) {
+                event.preventDefault();
+                const cleaned = val.replace(/[-()\s]+$/, '');
+                phone = formatPhone(cleaned.slice(0, -1));
+                event.target.value = phone;
+            }
+        }
+    }
+
     async function handleSubmit(event) {
         event.preventDefault();
+        errorMessage = '';
+
+        const digits = phone.replace(/\D/g, '');
+        if (digits.length !== 12) {
+            errorMessage = 'Пожалуйста, введите полный номер телефона: +375 (XX) XXX-XX-XX';
+            return;
+        }
+
         if (!agreed) {
-            alert('Пожалуйста, подтвердите согласие на обработку персональных данных');
+            errorMessage = 'Пожалуйста, подтвердите согласие на обработку персональных данных';
             return;
         }
 
         isSubmitting = true;
-        errorMessage = '';
 
         try {
-            /*
-               mode: 'no-cors' необходим, так как Google Apps Script делает 302-редирект,
-               который браузер без прокси блокирует по политике CORS.
-               С 'no-cors' данные успешно доходят и записываются в таблицу.
-            */
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -44,7 +113,7 @@
                 body: JSON.stringify({
                     name: name.trim(),
                     phone: phone.trim(),
-                    email: email.trim()
+                    email: email.trim() || 'Заявка из блока этапов (StepsForm)'
                 })
             });
 
@@ -112,6 +181,7 @@
                             <input
                                     id="step-name"
                                     type="text"
+                                    placeholder="Ваше имя"
                                     bind:value={name}
                                     disabled={isSubmitting}
                                     required
@@ -124,7 +194,12 @@
                                     id="step-phone"
                                     type="tel"
                                     placeholder="+375 (__) ___-__-__"
-                                    bind:value={phone}
+                                    value={phone}
+                                    on:input={handlePhoneInput}
+                                    on:focus={handlePhoneFocus}
+                                    on:blur={handlePhoneBlur}
+                                    on:keydown={handlePhoneKeyDown}
+                                    maxlength="19"
                                     disabled={isSubmitting}
                                     required
                             />
@@ -135,6 +210,7 @@
                             <input
                                     id="step-email"
                                     type="email"
+                                    placeholder="example@mail.ru"
                                     bind:value={email}
                                     disabled={isSubmitting}
                             />
@@ -155,7 +231,7 @@
                         </div>
 
                         <button type="submit" class="submit-btn" disabled={isSubmitting}>
-                            {isSubmitting ? 'Отправка...' : 'Оставить'}
+                            {isSubmitting ? 'Отправка...' : 'Оставить заявку'}
                         </button>
                     {/if}
                 </form>
@@ -165,7 +241,6 @@
 </section>
 
 <style>
-
     :global(.steps-form-anim.reveal-init) {
         opacity: 0;
         transform: translateY(35px);
@@ -311,6 +386,7 @@
 
     .form-group input:disabled {
         background-color: #f5f5f5;
+        cursor: not-allowed;
     }
 
     .checkbox-group {
@@ -346,9 +422,9 @@
         border: none;
         border-radius: 4px;
         font-family: inherit;
-        font-size: 20px;
+        font-size: 18px;
         line-height: 20px;
-        font-weight: 400;
+        font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s, transform 0.1s;
     }
@@ -357,12 +433,15 @@
         background-color: #e0a300;
     }
 
+    .submit-btn:active:not(:disabled) {
+        transform: translateY(1px);
+    }
+
     .submit-btn:disabled {
         opacity: 0.65;
         cursor: not-allowed;
     }
 
-    /* Экран успешной отправки */
     .success-box {
         text-align: center;
         padding: 10px 0;
@@ -397,6 +476,7 @@
         font-size: 12px;
         margin-bottom: 16px;
         text-align: center;
+        line-height: 1.4;
     }
 
     @media (max-width: 992px) {

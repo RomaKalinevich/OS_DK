@@ -1,5 +1,5 @@
 <script>
-    import {reveal} from '../actions/reveal.js';
+    import { reveal } from '../actions/reveal.js';
 
     let name = $state('');
     let phone = $state('');
@@ -11,15 +11,92 @@
 
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
 
+    // Жесткая маска +375 (XX) XXX-XX-XX
+    function formatPhone(val) {
+        let digits = val.replace(/\D/g, '');
+
+        // Если пользователь начинает ввод с 80..., 375... или 7...
+        if (digits.startsWith('80')) {
+            digits = '375' + digits.slice(2);
+        } else if (digits.startsWith('7')) {
+            digits = '375' + digits.slice(1);
+        } else if (!digits.startsWith('375')) {
+            digits = '375' + digits;
+        }
+
+        // 375 + ровно 9 цифр номера (всего 12 цифр)
+        digits = digits.slice(0, 12);
+
+        const local = digits.slice(3); // цифры после 375
+        let res = '+375';
+
+        if (local.length > 0) {
+            res += ' (' + local.slice(0, 2);
+        }
+        if (local.length >= 2) {
+            res += ') ' + local.slice(2, 5);
+        }
+        if (local.length >= 5) {
+            res += '-' + local.slice(5, 7);
+        }
+        if (local.length >= 7) {
+            res += '-' + local.slice(7, 9);
+        }
+
+        return res;
+    }
+
+    function handlePhoneInput(event) {
+        const input = event.target;
+        const formatted = formatPhone(input.value);
+        phone = formatted;
+        input.value = formatted;
+        if (errorMessage) errorMessage = '';
+    }
+
+    function handlePhoneFocus(event) {
+        if (!phone) {
+            phone = '+375 (';
+            event.target.value = phone;
+        }
+    }
+
+    function handlePhoneBlur() {
+        if (phone === '+375 (' || phone === '+375') {
+            phone = '';
+        }
+    }
+
+    function handlePhoneKeyDown(event) {
+        // Удобное стирание символов маски по Backspace
+        if (event.key === 'Backspace') {
+            const val = event.target.value;
+            if (val.endsWith('-') || val.endsWith(') ') || val.endsWith('(')) {
+                event.preventDefault();
+                const cleaned = val.replace(/[-()\s]+$/, '');
+                phone = formatPhone(cleaned.slice(0, -1));
+                event.target.value = phone;
+            }
+        }
+    }
+
     async function handleSubmit(event) {
         event.preventDefault();
+        errorMessage = '';
+
+        // Проверка: код 375 + ровно 9 цифр
+        const digits = phone.replace(/\D/g, '');
+        if (digits.length !== 12) {
+            errorMessage = 'Пожалуйста, введите полный номер телефона: +375 (XX) XXX-XX-XX';
+            return;
+        }
+
         if (!agreed) {
-            alert('Пожалуйста, подтвердите согласие на обработку персональных данных');
+            errorMessage = 'Пожалуйста, подтвердите согласие на обработку персональных данных';
             return;
         }
 
         isSubmitting = true;
-        errorMessage = '';
 
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
@@ -93,8 +170,7 @@
                         <div class="success-box">
                             <div class="success-icon">✓</div>
                             <h3>Заявка принята!</h3>
-                            <p class="success-text">Скидка 10% зафиксирована за вашим номером. Мы перезвоним вам в
-                                ближайшее время!</p>
+                            <p class="success-text">Скидка 10% зафиксирована за вашим номером. Мы перезвоним вам в ближайшее время!</p>
                             <button type="button" class="submit-btn" onclick={() => (isSuccess = false)}>
                                 Отправить еще
                             </button>
@@ -111,6 +187,7 @@
                             <input
                                     id="name"
                                     type="text"
+                                    placeholder="Ваше имя"
                                     bind:value={name}
                                     disabled={isSubmitting}
                                     required
@@ -123,7 +200,12 @@
                                     id="phone"
                                     type="tel"
                                     placeholder="+375 (__) ___-__-__"
-                                    bind:value={phone}
+                                    value={phone}
+                                    oninput={handlePhoneInput}
+                                    onfocus={handlePhoneFocus}
+                                    onblur={handlePhoneBlur}
+                                    onkeydown={handlePhoneKeyDown}
+                                    maxlength="19"
                                     disabled={isSubmitting}
                                     required
                             />
@@ -385,6 +467,7 @@
         font-size: 13px;
         margin-bottom: 16px;
         text-align: center;
+        line-height: 1.4;
     }
 
     /* Индивидуальная анимация формы в Hero: плавный въезд справа с масштабом */
