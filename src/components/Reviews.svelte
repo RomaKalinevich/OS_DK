@@ -1,11 +1,11 @@
 <script>
     export let reviews = [
-        '/images/reviews/review-1.jpg',
-        '/images/reviews/review-2.jpg',
-        '/images/reviews/review-З.jpg'
+        '/assets/reviews/review-1.jpg',
+        '/assets/reviews/review-2.jpg',
+        '/assets/reviews/review-З.jpg'
     ];
 
-    export let sideImage = '/images/reviews/review-bg.png';
+    export let sideImage = '/assets/reviews/review-bg.png';
 </script>
 
 <section id="reviews" class="reviews-section">
@@ -94,7 +94,7 @@
     .review-card {
         flex: 0 0 345px;
         width: 371px;
-        height: 417px;
+        height: 650px;
         border-radius: 4px;
         overflow: hidden;
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
