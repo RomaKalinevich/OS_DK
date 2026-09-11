@@ -465,6 +465,10 @@
         Адаптация анимаций под мобильные устройства (<= 992px)
      ------------------------------------------------------------- */
     @media (max-width: 992px) {
+        .works-section {
+            padding: 30px 40px;
+        }
+
         .work-card,
         .work-card.reverse {
             flex-direction: column;
