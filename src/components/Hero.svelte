@@ -131,7 +131,7 @@
 
                 <div
                         class="features-grid hero-features-anim"
-                        use:reveal={{ offset: '0px', delay: 150 }}
+                        use:reveal={{ offset: '0px', delay: 100 }}
                 >
                     <div class="feature-item">
                         <img class="feature-icon" src="/images/fill-application.png" alt="Шаг 1"/>
@@ -159,7 +159,7 @@
                 <form
                         class="lead-card hero-form-anim"
                         onsubmit={handleSubmit}
-                        use:reveal={{ offset: '0px', delay: 350 }}
+                        use:reveal={{ offset: '0px', delay: 150 }}
                 >
                     {#if isSuccess}
                         <div class="success-box">
@@ -214,7 +214,7 @@
                                     disabled={isSubmitting}
                                     required
                             />
-                            <label for="step-agree">
+                            <label for="agree">
                                 <span>*</span> Я согласен на обработку моих
                                 <a
                                         href="/privacy-policy.docx"
@@ -251,6 +251,7 @@
 
     .hero-overlay {
         position: absolute;
+        inset: 0;
         background: rgba(26, 26, 26, 0.78);
     }
 
@@ -470,7 +471,7 @@
         line-height: 1.4;
     }
 
-    /* ---------------- Анимации ---------------- */
+    /* ---------------- Анимации (Десктоп) ---------------- */
     :global(.hero-form-anim.reveal-init) {
         opacity: 0;
         transform: translateX(24px) scale(0.97);
@@ -541,7 +542,6 @@
             gap: 14px;
         }
 
-        /* Иконка выводится как есть, без сторонней обводки */
         .feature-icon {
             width: 52px;
             height: 52px;
@@ -570,8 +570,30 @@
             margin-bottom: 20px;
         }
 
+        /* Мягкая мобильная анимация карточки (вертикальный вход вместо бокового) */
         :global(.hero-form-anim.reveal-init) {
-            transform: translateY(20px) scale(0.98);
+            transform: translateY(12px) scale(0.99) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+            transition: opacity 0.48s ease-out,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.55s ease !important;
         }
+
+        :global(.hero-form-anim.revealed) {
+            transform: translateY(0) scale(1) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        /* Плавные последовательные шаги без зависаний */
+        :global(.hero-features-anim.reveal-init) .feature-item {
+            transform: translateY(10px) !important;
+            transition: opacity 0.45s ease-out,
+            transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(1) { transition-delay: 0.06s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(2) { transition-delay: 0.12s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(3) { transition-delay: 0.18s !important; }
+        :global(.hero-features-anim.revealed) .feature-item:nth-child(4) { transition-delay: 0.24s !important; }
     }
 </style>
