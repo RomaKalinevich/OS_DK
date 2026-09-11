@@ -19,7 +19,6 @@
         'Вы подписываете договор - мы реализуем вашу мебель'
     ];
 
-    // Форматирование телефона строго по маске +375 (XX) XXX-XX-XX
     function formatPhone(val) {
         let digits = val.replace(/\D/g, '');
 
@@ -110,7 +109,7 @@
                 },
                 body: JSON.stringify({
                     name: name.trim(),
-                    phone: phone.trim(),
+                    phone: digits, // только цифры: 375333333333
                     email: email.trim(),
                     note: 'Заявка на просчет'
                 })
@@ -135,7 +134,6 @@
 
     <div class="container">
         <div class="steps-content">
-            <!-- Левая колонка: этапы -->
             <div class="steps-left">
                 <h2 class="section-title">От заявки до готовой мебели</h2>
 
@@ -153,7 +151,6 @@
                 </div>
             </div>
 
-            <!-- Правая колонка: форма -->
             <div class="steps-right">
                 <form
                         class="lead-card steps-form-anim"
@@ -248,7 +245,6 @@
 </section>
 
 <style>
-    /* Десктопная анимация появления формы */
     :global(.steps-form-anim.reveal-init) {
         opacity: 0;
         transform: translateY(24px);
@@ -488,7 +484,6 @@
         line-height: 1.4;
     }
 
-    /* ---------------- Мобильная адаптация (<= 992px) ---------------- */
     @media (max-width: 992px) {
         .steps-section {
             padding: 44px 16px 54px;
@@ -555,7 +550,6 @@
             font-size: 16px;
         }
 
-        /* Ультра-плавное мобильное появление формы */
         :global(.steps-form-anim.reveal-init) {
             opacity: 0 !important;
             transform: translateY(6px) !important;

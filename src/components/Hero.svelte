@@ -11,7 +11,6 @@
 
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBeyLGu0wxJgVbQn407XXsxyYaZkdYud3kGn0iv0aUHXK5hTvjwdxvqyurJPBaP5fQDA/exec';
 
-    // Жесткая маска +375 (XX) XXX-XX-XX
     function formatPhone(val) {
         let digits = val.replace(/\D/g, '');
 
@@ -102,9 +101,9 @@
                 },
                 body: JSON.stringify({
                     name: name.trim(),
-                    phone: phone.trim(),
+                    phone: digits, // отправка только цифр: 375333333333
                     email: '',
-                    note: 'Заявка на скидку 10%'
+                    note: 'Акция (скидка 10%)'
                 })
             });
 
@@ -472,7 +471,6 @@
         line-height: 1.4;
     }
 
-    /* ---------------- Анимации (Десктоп) ---------------- */
     :global(.hero-form-anim.reveal-init) {
         opacity: 0;
         transform: translateX(24px) scale(0.97);
@@ -502,7 +500,6 @@
     :global(.hero-features-anim.revealed) .feature-item:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
     :global(.hero-features-anim.revealed) .feature-item:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
 
-    /* ---------------- Адаптив под мобилку (390px) ---------------- */
     @media (max-width: 992px) {
         .hero {
             min-height: auto;
