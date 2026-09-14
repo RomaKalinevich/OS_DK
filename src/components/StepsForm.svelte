@@ -10,7 +10,7 @@
     let isSuccess = $state(false);
     let errorMessage = $state('');
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOYPv0ZxBnsMzpUlqcQbSOXfh_W-kGJJEr6jvJQqGlT_7KuD07vzYlbsudJAfDrtXzCA/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAxYx10W4caMsOYAdNj5v4SpPxY1hZAR8Pv_tFxWZejTu9_c4FcZokIZv51luLV4Xk-w/exec';
 
     const steps = [
         'Впишите имя и номер телефона в форму',
