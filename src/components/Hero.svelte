@@ -9,7 +9,7 @@
     let isSuccess = $state(false);
     let errorMessage = $state('');
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAxYx10W4caMsOYAdNj5v4SpPxY1hZAR8Pv_tFxWZejTu9_c4FcZokIZv51luLV4Xk-w/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxLKpH8fDhd2Ri-YmJXeSAG6jsqvwqaJ8jxCXjDpVZXHOOofxGDeJjzzN4BbjGWiIxDQ/exec';
 
     function formatPhone(val) {
         let digits = val.replace(/\D/g, '');
